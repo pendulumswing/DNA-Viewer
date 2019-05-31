@@ -39,24 +39,61 @@ function degToRad(degrees) {
 };
 
 function main() {
-
-    // RENDERER
-    const canvas = document.querySelector('#c');
-    const renderer = new THREE.WebGLRenderer({canvas});
-    const gui = new dat.GUI();
     
+     
+
+    // CANVAS
+    let canvas = document.querySelector('#c');
+    let aspect = 2;
+
+    // SQUARE ASPECT PROFILE
+    // {   
+    //     const parent = canvas.parentElement;
+    //     const style = getComputedStyle(parent); 
+    //     const num = parseFloat(style.width, 10);
+    //     canvas.height = num;
+    //     canvas.width = num;
+    //     aspect = canvas.width / canvas.height;
+    // }
+
+    // 1.5 ASPECT PROFILE
+    // {   
+        // const parent = canvas.parentElement;
+        // const style = getComputedStyle(parent); 
+        // const num = parseFloat(style.width, 10);
+        // canvas.height = num * .75;
+        // canvas.width = num;
+        // aspect = canvas.width / canvas.height;
+    // }
+
+    // WINDOW ASPECT PROFILE
+    // {   
+    //     canvas.height = window.innerHeight;
+    //     canvas.width = window.innerWidth;
+    //     aspect = canvas.width / canvas.height;
+    // }
+
+    // RENDERER    
+    const renderer = new THREE.WebGLRenderer({canvas});
+
     // CAMERA
     const fov = 30;
-    const aspect = 2;
     const near = 0.1;
     const far = 500;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.position.set(10,5,10);
     camera.lookAt(0,-1,0);
-    camera.up.set(0,1,0);   
+    camera.up.set(0,1,0);  
+
+    // GUI DOM
+    const gui = new dat.GUI( { autoPlace: false } );        // SOURCE: https://jsfiddle.net/2pha/zka4qkt2/
+    const guiContainer = document.getElementById('gui');
+    guiContainer.appendChild(gui.domElement);
+    
+    
 
     // CONTROLS - ORBITAL
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.update();
 
     // SCENE
@@ -371,7 +408,10 @@ function main() {
         base2.basePair_Loc.position.y = botBase.y;
     };
 
-    // GUI
+
+    
+
+    // GUI 
     const trans = {x:0, y:0, z:0};
     const harmonicRot = {x:0, y:0, z:0}; 
     const dihedralRot = {x:0, y:0, z:0};  
@@ -394,70 +434,67 @@ function main() {
         base1.basePair_Loc.position.y = value * 1 + basePair_LocPosY;
     });
     
-    gui.add(damping, "b", -5.000, 0.000).name('Bond Damping').onChange( function(value) {  
+    let springOptionsGuiFolder = gui.addFolder('Spring Options');
+
+    springOptionsGuiFolder.add(damping, "b", -5.000, 0.000).name('Damping').onChange( function(value) {  
         damping.b = value;
     });
 
-    gui.add(stiffness, "k", -100, 0).name('Bond Stiffness').onChange( function(value) {    
+    springOptionsGuiFolder.add(stiffness, "k", -100, 0).name('Stiffness').onChange( function(value) {    
         stiffness.k = value;
     });
 
-    gui.add(showSprings, "visible").name('Show Springs').onChange( function(value) {  
+    springOptionsGuiFolder.add(showSprings, "visible").name('Show Springs').onChange( function(value) {  
         springs.forEach((node) => {
             node.spring_Obj.visible = value;
         })
     });
 
-    gui.add(showAxes, "visible").name('Show Axes').onChange( function(value) {  
+    let debugGuiFolder = gui.addFolder('Debug');
+
+    debugGuiFolder.add(showAxes, "visible").name('Show Axes').onChange( function(value) {  
         checkAxesHelpers(value);
     });
+
+    gui.close();
     
+
+
+
+    // PAUSE RENDER - https://stackoverflow.com/questions/38034787/three-js-and-buttons-for-start-and-pause-animation
+
 
 
     // RENDER
     renderer.render(scene, camera);
+
+    base1.basePair_Loc.position.y = 1.5;    // Start with a little springiness on load
 
     // RENDER UPDATE LOOP
     function render(time) {
         time *= 0.001;  // converts time to seconds
 
         // Responisve Aspect Ratio
-        if(resizeRendererToDisplaySize(renderer)) {
-            const canvas = renderer.domElement;
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-        }
-        
-        // Animate Objects
-        // objects.forEach((obj, index) => {
-        //     const speed = 1 + index * 0.1;
-        //     const rot = time * speed;
-        //     const pos = (((1 + index) + time) % 3) /0.5 -3;
-        //     obj.rotation.x = rot;
-        //     obj.rotation.y = rot; 
-        //     obj.position.x = pos;
-        // });      
-        
-        // add an AxesHelper to each node
-        // objects.forEach((node) => {
-        //     const axes = new THREE.AxesHelper();
-        //     axes.material.depthTest = false;
-        //     axes.renderOrder = 1;
-        //     node.add(axes);
-        // });
+        // if(resizeRendererToDisplaySize(renderer)) {
+        //     const canvas = renderer.domElement;
+        //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        //     camera.updateProjectionMatrix();
+        // }
 
+        resizeRendererToDisplaySize(renderer);
+        
         // SPRINGS
         springLoop();
         springs.forEach((node) => {
             node.update();
         })
-
+        
         controls.update();
         requestAnimationFrame(render);
         renderer.render(scene, camera);
     }
-        requestAnimationFrame(render);
-
+    requestAnimationFrame(render);
+    
     // Responsive Display
     function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement;
@@ -466,6 +503,8 @@ function main() {
         const needResize = canvas.width !== width || canvas.height !== height;
         if (needResize) {
             renderer.setSize(width, height, false);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
         }
         return needResize;
     } 
@@ -487,3 +526,16 @@ main();
 //       };
 //     },
 //   });
+                
+                
+
+
+// Animate Objects
+// objects.forEach((obj, index) => {
+//     const speed = 1 + index * 0.1;
+//     const rot = time * speed;
+//     const pos = (((1 + index) + time) % 3) /0.5 -3;
+//     obj.rotation.x = rot;
+//     obj.rotation.y = rot; 
+//     obj.position.x = pos;
+// });  

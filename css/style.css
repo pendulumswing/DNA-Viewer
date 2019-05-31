@@ -8,7 +8,6 @@ html, body {
 
 #c {
     width: 100%;
-    height: 100%;
     /* display: block; */
 }
 
@@ -30,4 +29,30 @@ html, body {
 }
 .gutter.gutter-horizontal {
     cursor: ew-resize;
+}
+
+.animDiv {
+    padding: 30px;
+    position: relative;
+    max-width: 800px;
+    max-height: 800px;
+}
+
+#gui {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    z-index: 10;
+}
+
+#reset {   
+    position: absolute;
+    top: 35px;
+    left: 35px;
+}
+
+#pause {   
+    position: absolute;
+    top: 65px;
+    left: 35px;
 }
