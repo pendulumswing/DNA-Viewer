@@ -98,7 +98,6 @@ function main() {
 
     // Array of objects
     const objects = [];
-
     const BASE_DISTANCE_START = 2;
 
     // Geometry Parameters
@@ -164,6 +163,7 @@ function main() {
         constructor() {
 
             this.components = [];
+            this.axesHelpers = [];
 
             // Left Arm
             this.bondLeft_Loc = new THREE.Object3D();
@@ -213,12 +213,19 @@ function main() {
             this.components.push(this.basePair_Loc);
         }
 
-        addAxisHelper() {
+        addAxesHelper() {
             this.components.forEach((node) => {
                 const axes = new THREE.AxesHelper();
                 axes.material.depthTest = false;
                 axes.renderOrder = 1;
+                this.axesHelpers.push(axes);
                 node.add(axes);
+            });
+        }
+
+        hideAxesHelper() {
+            this.axesHelpers.forEach((node) => {
+                node.visible = false;
             });
         }
     };
@@ -227,6 +234,7 @@ function main() {
         constructor(top, bot) {
 
             this.components = [];
+            this.axesHelpers = [];
             // Make Spring Objects   (2 Empty, 1 Cylinder)
             this.topAtom_Loc = new THREE.Object3D();
             scene.add(this.topAtom_Loc);
@@ -273,12 +281,19 @@ function main() {
             this.components.push(this.spring_Obj);
         }
 
-        addAxisHelper() {
+        addAxesHelper() {
             this.components.forEach((node) => {
                 const axes = new THREE.AxesHelper();
                 axes.material.depthTest = false;
                 axes.renderOrder = 1;
+                this.axesHelpers.push(axes);
                 node.add(axes);
+            });
+        }
+
+        hideAxesHelper() {
+            this.axesHelpers.forEach((node) => {
+                node.visible = false;
             });
         }
     };
@@ -301,16 +316,28 @@ function main() {
     springs.push(springC);
     springs.push(springR);
 
+    
     // AXIS HELPER
-    // {
-    //     springs.forEach((node) => {
-    //         node.addAxisHelper();
-    //     })
-
-    //     bases.forEach((node) => {
-    //         node.addAxisHelper();
-    //     })
-    // }
+    function checkAxesHelpers(val) {
+        if(val) {
+            springs.forEach((node) => {
+                node.addAxesHelper();
+            })
+    
+            bases.forEach((node) => {
+                node.addAxesHelper();
+            })
+        } else {
+            console.log("Turn off");
+            springs.forEach((node) => {
+                node.hideAxesHelper();
+            })
+    
+            bases.forEach((node) => {
+                node.hideAxesHelper();
+            })
+        }
+    }
     
     // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
     const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
@@ -349,6 +376,7 @@ function main() {
     const harmonicRot = {x:0, y:0, z:0}; 
     const dihedralRot = {x:0, y:0, z:0};  
     let showSprings = {visible: true};
+    let showAxes = {visible: false};
 
     gui.add(harmonicRot, "y", -1.000, 1.000).name('Angle').onChange( function(value) {     // SOURCE: https://bit.ly/2I4pqbM
         base1.bondLeft_Loc.rotation.y = value;
@@ -378,6 +406,10 @@ function main() {
         springs.forEach((node) => {
             node.spring_Obj.visible = value;
         })
+    });
+
+    gui.add(showAxes, "visible").name('Show Axes').onChange( function(value) {  
+        checkAxesHelpers(value);
     });
     
 
