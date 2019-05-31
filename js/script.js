@@ -198,20 +198,22 @@ function main() {
             this.bondRight_Obj.position.x = 1;
             this.bondRight_Loc.add(this.bondRight_Obj);
             this.bondRight_Loc.add(this.phosRight_Obj);
+
+            this.addComponents();
         }
 
-        addAxisHelper() {
+        addComponents() {
             this.components.push(this.bondLeft_Loc);
             this.components.push(this.bondLeft_Obj);
             this.components.push(this.phosLeft_Obj);
-
             this.components.push(this.bondRight_Loc);
             this.components.push(this.bondRight_Obj);
             this.components.push(this.phosRight_Obj);
-
             this.components.push(this.base_Obj);
             this.components.push(this.basePair_Loc);
+        }
 
+        addAxisHelper() {
             this.components.forEach((node) => {
                 const axes = new THREE.AxesHelper();
                 axes.material.depthTest = false;
@@ -224,6 +226,7 @@ function main() {
     class Spring {
         constructor(top, bot) {
 
+            this.components = [];
             // Make Spring Objects   (2 Empty, 1 Cylinder)
             this.topAtom_Loc = new THREE.Object3D();
             scene.add(this.topAtom_Loc);
@@ -241,6 +244,7 @@ function main() {
             this.botAtom_Loc.rotation.x = degToRad(90);
 
             this.rig(top, bot);
+            this.addComponents();
         }
 
         rig(top, bot) {
@@ -263,13 +267,14 @@ function main() {
             this.botAtom_Loc.lookAt(this.topPos);                               // Orientation
         }
 
-        addAxisHelper() {
-            const components = [];
-            components.push(this.botAtom_Loc);
-            components.push(this.topAtom_Loc);
-            components.push(this.spring_Obj);
+        addComponents() {
+            this.components.push(this.botAtom_Loc);
+            this.components.push(this.topAtom_Loc);
+            this.components.push(this.spring_Obj);
+        }
 
-            components.forEach((node) => {
+        addAxisHelper() {
+            this.components.forEach((node) => {
                 const axes = new THREE.AxesHelper();
                 axes.material.depthTest = false;
                 axes.renderOrder = 1;
@@ -296,6 +301,16 @@ function main() {
     springs.push(springC);
     springs.push(springR);
 
+    // AXIS HELPER
+    // {
+    //     springs.forEach((node) => {
+    //         node.addAxisHelper();
+    //     })
+
+    //     bases.forEach((node) => {
+    //         node.addAxisHelper();
+    //     })
+    // }
     
     // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
     const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
@@ -366,6 +381,7 @@ function main() {
     });
     
 
+
     // RENDER
     renderer.render(scene, camera);
 
@@ -402,13 +418,7 @@ function main() {
         springLoop();
         springs.forEach((node) => {
             node.update();
-            // node.addAxisHelper();
         })
-
-        bases.forEach((node) => {
-            // node.addAxisHelper();
-        })
-
 
         controls.update();
         requestAnimationFrame(render);
