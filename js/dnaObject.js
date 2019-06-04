@@ -5,6 +5,9 @@ DNA Bases - Creates an interactive 3D pair of Base Pairs.
 
 'use strict';
 
+import {Base} from './dnaObjects.js';
+import {Spring} from './dnaObjects.js';
+// import {} from './dnaObjects.js';
 // import { GeometryUtils } from "three";
 
 // import * as THREE from 'three';
@@ -38,11 +41,10 @@ function degToRad(degrees) {
   return degrees * (pi/180);
 };
 
-function main() {
-    
-     
+export function dnaObject(canvasSelector) {
+
     // CANVAS
-    let canvas = document.querySelector('#c');
+    const canvas = document.querySelector(canvasSelector);
     let aspect = 2;
 
     // SQUARE ASPECT PROFILE
@@ -57,12 +59,12 @@ function main() {
 
     // 1.5 ASPECT PROFILE
     // {   
-        // const parent = canvas.parentElement;
-        // const style = getComputedStyle(parent); 
-        // const num = parseFloat(style.width, 10);
-        // canvas.height = num * .75;
-        // canvas.width = num;
-        // aspect = canvas.width / canvas.height;
+    //     const parent = canvas.parentElement;
+    //     const style = getComputedStyle(parent); 
+    //     const num = parseFloat(style.width, 10);
+    //     canvas.height = num * .75;
+    //     canvas.width = num;
+    //     aspect = canvas.width / canvas.height;
     // }
 
     // WINDOW ASPECT PROFILE
@@ -80,7 +82,7 @@ function main() {
     const near = 0.1;
     const far = 500;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.set(10,5,10);
+    camera.position.set(10,3,15);
     camera.lookAt(0,-1,0);
     camera.up.set(0,1,0);  
 
@@ -89,8 +91,6 @@ function main() {
     const guiContainer = document.getElementById('gui');
     guiContainer.appendChild(gui.domElement);
     
-    
-
     // CONTROLS - ORBITAL
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.update();
@@ -98,6 +98,10 @@ function main() {
     // SCENE
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xAAAAAA);
+
+    // GROUP
+    const group = new THREE.Group();
+    scene.add(group);
 
     // LIGHT - Directional
     {
@@ -134,27 +138,28 @@ function main() {
 
     // Array of objects
     const objects = [];
-    const BASE_DISTANCE_START = 2;
+    const BASE_DISTANCE_START = 1.1;
+    const BOND_DISTANCE_START = 2;
 
     // Geometry Parameters
     const baseRadius = 0.4;
     const phosphateRadius = 0.4;
     const widthSegments = 20;
     const heightSegments = 20;
-    const cylHeight = 2;
-    const cylRadius = 0.08;
-    const cylRadSegments = 8;
-    const cylHeighSegments = 1;
+    const bondHeight = BOND_DISTANCE_START;
+    const bondRadius = 0.08;
+    const bondRadSegments = 8;
+    const bondHeightSegments = 1;
     const planeWidth = 8;
     const springRadius = 0.07;
-    const springHeight = 2;
+    const springHeight = BASE_DISTANCE_START;
     const springRadSegments = 8;
     const springHeightSegments = 1;
 
     // Create Geometry
     const base_Geo = new THREE.SphereGeometry(baseRadius, widthSegments, heightSegments);
     const phos_Geo = new THREE.SphereGeometry(phosphateRadius, widthSegments, heightSegments);
-    const bond_Geo = new THREE.CylinderGeometry(cylRadius, cylRadius, cylHeight, cylRadSegments, cylHeighSegments);    
+    const bond_Geo = new THREE.CylinderGeometry(bondRadius, bondRadius, bondHeight, bondRadSegments, bondHeightSegments);    
     const spring_Geo = new THREE.CylinderGeometry(springRadius, springRadius, springHeight, springRadSegments, springHeightSegments);
     const groundPlane_Geo = new THREE.PlaneGeometry(planeWidth, planeWidth);
 
@@ -181,6 +186,7 @@ function main() {
         // material.wireframe = true;
         const object = new THREE.Mesh(geometry, material);
         scene.add(object);
+        // group.add(object);
         object.position.x = pos.x;
         object.position.y = pos.y;
         object.position.z = pos.z;
@@ -204,17 +210,20 @@ function main() {
             // Left Arm
             this.bondLeft_Loc = new THREE.Object3D();
             scene.add(this.bondLeft_Loc);
+            // group.add(this.bondLeft_Loc);
             this.bondLeft_Obj = makeInstance(bond_Geo, bond_Color, leftArm_Pos);
             this.phosLeft_Obj = makeInstance(phos_Geo, phos_Color, phosLeft_Pos);
 
             // Base
             this.basePair_Loc = new THREE.Object3D();
             scene.add(this.basePair_Loc);
+            group.add(this.basePair_Loc);
             this.base_Obj = makeInstance(base_Geo, base_Color, base_Pos);
 
             // Right Arm
             this.bondRight_Loc = new THREE.Object3D();
             scene.add(this.bondRight_Loc);
+            // group.add(this.bondRight_Loc);
             this.bondRight_Obj = makeInstance(bond_Geo, bond_Color, rightArm_Pos);
             this.phosRight_Obj = makeInstance(phos_Geo, phos_Color, phosRight_Pos);
 
@@ -279,11 +288,13 @@ function main() {
             this.spring_Obj = makeInstance(spring_Geo, spring_Color, spring_Pos);
             this.spring_Obj.material.transparent = true;
             this.spring_Obj.material.opacity = 0.5;
+            // this.baseDistance = BASE_DISTANCE_START;
             this.baseDistance = BASE_DISTANCE_START;
 
             // this.botAtom_Loc.position.set(bot);
             this.botAtom_Loc.add(this.spring_Obj);
-            this.spring_Obj.position.z = this.baseDistance / 2;
+            this.spring_Obj.position.z = this.baseDistance / 2.0;
+            // this.spring_Obj.position.z = 20;
             this.spring_Obj.rotation.x = degToRad(90);
             this.botAtom_Loc.rotation.x = degToRad(90);
 
@@ -305,9 +316,10 @@ function main() {
             this.botPos = this.botAtom_Loc.getWorldPosition(this.vector1);
             this.topPos = this.topAtom_Loc.getWorldPosition(this.vector2);                
             this.distance = this.botPos.distanceTo(this.topPos);                // Distance between Atoms
+            // console.log("Distance: " + this.distance);
 
-            this.spring_Obj.scale.y = this.distance / this.baseDistance;        // Length
-            this.spring_Obj.position.z = this.distance / this.baseDistance;     // Center Position
+            this.spring_Obj.scale.y = this.distance / (this.baseDistance );        // Length
+            this.spring_Obj.position.z = this.distance / 2;     // Center Position
             this.botAtom_Loc.lookAt(this.topPos);                               // Orientation
         }
 
@@ -334,23 +346,103 @@ function main() {
         }
     };
 
+    
+    // RAYCASTING
+    window.addEventListener( 'resize', onWindowResize, false );
+    window.addEventListener( "mousemove", onDocumentMouseMove, false );
+
+    // Responsive Display
+    function onWindowResize() {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        }
+    } 
+
+    let selectedObject = null;
+    let origColor = new THREE.Color(0x000000);
+    let selectedColor = new THREE.Color(0xcc3311)
+
+    function onDocumentMouseMove( event ) {
+        event.preventDefault();
+        if ( selectedObject ) {
+            selectedObject.material.color.set(origColor);
+            selectedObject = null;
+        }
+
+        var intersects = getIntersects( event.layerX, event.layerY );
+
+        if ( intersects.length > 0 ) {
+            var res = intersects.filter( function ( res ) {
+                return res && res.object;
+            } )[ 0 ];
+            
+            if ( res && res.object ) {
+                selectedObject = res.object;
+                if(selectedObject.material.color.getHexString() !== selectedColor.getHexString()) {
+                    origColor.copy(selectedObject.material.color);
+                }
+                selectedObject.material.color.set(selectedColor);
+            }
+        }
+    }
+
+    var raycaster = new THREE.Raycaster();
+    var mouseVector = new THREE.Vector3();
+
+    function getIntersects( x, y ) {
+        // x = ( x / window.innerWidth ) * 2 - 1;
+        // y = - ( y / window.innerHeight ) * 2 + 1;
+        x = ( x / canvas.width ) * 2 - 1;
+        y = - ( y / canvas.height ) * 2 + 1;
+        mouseVector.set( x, y, 0.5 );
+        raycaster.setFromCamera( mouseVector, camera );
+        return raycaster.intersectObject( group, true );
+    }
+
+
+    /*****************************************
+     * 
+     *                 OBJECTS
+     * 
+     *****************************************/
+
     // BASES
     const bases = [];
+
     const base1 = new Base();
     const base2 = new Base();
+    const base3 = new Base();
     base1.basePair_Loc.position.y = 1;
     base2.basePair_Loc.position.y = base1.basePair_Loc.position.y - BASE_DISTANCE_START;    
+    base3.basePair_Loc.position.y = base2.basePair_Loc.position.y - BASE_DISTANCE_START;    
     bases.push(base1);
     bases.push(base2);
+    bases.push(base3);
 
     // SPRINGS
     const springs = [];
-    const springL = new Spring(base1.phosLeft_Obj, base2.phosLeft_Obj);
-    const springC = new Spring(base1.base_Obj, base2.base_Obj);
-    const springR = new Spring(base1.phosRight_Obj, base2.phosRight_Obj);
-    springs.push(springL);
-    springs.push(springC);
-    springs.push(springR);
+
+    // 1st Group
+    const springL1 = new Spring(base1.phosLeft_Obj, base2.phosLeft_Obj);
+    const springC1 = new Spring(base1.base_Obj, base2.base_Obj);
+    const springR1 = new Spring(base1.phosRight_Obj, base2.phosRight_Obj);
+    springs.push(springL1);
+    springs.push(springC1);
+    springs.push(springR1);
+
+    // 2nd Group
+    const springL2 = new Spring(base2.phosLeft_Obj, base3.phosLeft_Obj);
+    const springC2 = new Spring(base2.base_Obj, base3.base_Obj);
+    const springR2 = new Spring(base2.phosRight_Obj, base3.phosRight_Obj);
+    springs.push(springL2);
+    springs.push(springC2);
+    springs.push(springR2);
 
     
     // AXIS HELPER
@@ -364,7 +456,6 @@ function main() {
                 node.addAxesHelper();
             })
         } else {
-            console.log("Turn off");
             springs.forEach((node) => {
                 node.hideAxesHelper();
             })
@@ -384,10 +475,10 @@ function main() {
     var topBase = {y: 1, v: 0, mass: 1};                                                // Object to hold Top Base Spring Data
     var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
 
-    var springLoop = function() {
+    var springLoop = function(top, bot) {
         
-        topBase.y = base1.basePair_Loc.position.y;                                      // Grab Current Position
-        botBase.y = base2.basePair_Loc.position.y;
+        topBase.y = top.basePair_Loc.position.y;                                      // Grab Current Position
+        botBase.y = bot.basePair_Loc.position.y;
 
         if(topBase.y - botBase.y != spring_length)                                      // If not at Equilibrium
         {
@@ -403,10 +494,9 @@ function main() {
             botBase.y += botBase.v * framerate;
         }
 
-        base1.basePair_Loc.position.y = topBase.y;                                      // Update Position of Bases
-        base2.basePair_Loc.position.y = botBase.y;
+        top.basePair_Loc.position.y = topBase.y;                                      // Update Position of Bases
+        bot.basePair_Loc.position.y = botBase.y;
     };
-
 
     
 
@@ -418,17 +508,28 @@ function main() {
     let showAxes = {visible: false};
 
     gui.add(harmonicRot, "y", -1.000, 1.000).name('Angle').onChange( function(value) {     // SOURCE: https://bit.ly/2I4pqbM
-        base1.bondLeft_Loc.rotation.y = value;
-        base1.bondRight_Loc.rotation.y = -value;
-        base2.bondLeft_Loc.rotation.y = value;
-        base2.bondRight_Loc.rotation.y = -value;
+        bases.forEach((base) => {
+            base.bondLeft_Loc.rotation.y = value;
+            base.bondRight_Loc.rotation.y = -value;
+        })
     });
     
     gui.add(dihedralRot, "y", -1.000, 1.000).name('Dihedral').onChange( function(value) {  
         base1.basePair_Loc.rotation.y = value;
+        for(let i = 0; i < Object.keys(bases).length; i++) {
+            if(i === 0) {
+                bases[i].basePair_Loc.rotation.y = value;
+            }
+            if(i > 1) {
+                if(value !== 0) {
+                    let angle = (i - 1) * -value;
+                    bases[i].basePair_Loc.rotation.y = angle;
+                }
+            }
+        }
     });
 
-    gui.add(trans, "y", -2.0, 2.0).name('Distance').onChange( function(value) {    
+    gui.add(trans, "y", -2.0, 2.0).name('Move').onChange( function(value) {    
         const basePair_LocPosY = 1;
         base1.basePair_Loc.position.y = value * 1 + basePair_LocPosY;
     });
@@ -457,11 +558,7 @@ function main() {
 
     gui.close();
     
-
-
-
     // PAUSE RENDER - https://stackoverflow.com/questions/38034787/three-js-and-buttons-for-start-and-pause-animation
-
 
 
     // RENDER
@@ -473,20 +570,14 @@ function main() {
     function render(time) {
         time *= 0.001;  // converts time to seconds
 
-        // Responisve Aspect Ratio
-        // if(resizeRendererToDisplaySize(renderer)) {
-        //     const canvas = renderer.domElement;
-        //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        //     camera.updateProjectionMatrix();
-        // }
-
         resizeRendererToDisplaySize(renderer);
         
         // SPRINGS
-        springLoop();
         springs.forEach((node) => {
             node.update();
         })
+        springLoop(base1, base2);
+        springLoop(base2, base3);
         
         controls.update();
         requestAnimationFrame(render);
@@ -509,32 +600,3 @@ function main() {
     } 
 }
 
-main();
-
-// Split(['#view', '#controls'], {  // eslint-disable-line new-cap
-//     sizes: [75, 25],
-//     minSize: 100,
-//     elementStyle: (dimension, size, gutterSize) => {
-//       return {
-//         'flex-basis': `calc(${size}% - ${gutterSize}px)`,
-//       };
-//     },
-//     gutterStyle: (dimension, gutterSize) => {
-//       return {
-//         'flex-basis': `${gutterSize}px`,
-//       };
-//     },
-//   });
-                
-                
-
-
-// Animate Objects
-// objects.forEach((obj, index) => {
-//     const speed = 1 + index * 0.1;
-//     const rot = time * speed;
-//     const pos = (((1 + index) + time) % 3) /0.5 -3;
-//     obj.rotation.x = rot;
-//     obj.rotation.y = rot; 
-//     obj.position.x = pos;
-// });  

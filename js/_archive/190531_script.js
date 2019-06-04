@@ -41,6 +41,7 @@ function degToRad(degrees) {
 function main() {
     
      
+
     // CANVAS
     let canvas = document.querySelector('#c');
     let aspect = 2;
