@@ -32,7 +32,7 @@ html, body {
 }
 
 .animDiv {
-    padding: 30px;
+    margin: 30px;       /* Use margin instead of padding for raycasting to work */
     position: relative;
     max-width: 800px;
     max-height: 800px;
@@ -40,8 +40,8 @@ html, body {
 
 #gui {
     position: absolute;
-    top: 30px;
-    right: 30px;
+    top: 0px;
+    right: 0px;
     z-index: 10;
 }
 
