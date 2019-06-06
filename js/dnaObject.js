@@ -201,6 +201,8 @@ export function dnaObject(canvasSelector) {
     // groundPlane_Obj.rotation.x = -(degToRad(90));
     // groundPlane_Obj.position.y = -2;
 
+    const baseObjects = [];
+
     class Base {
         constructor() {
 
@@ -210,23 +212,29 @@ export function dnaObject(canvasSelector) {
             // Left Arm
             this.bondLeft_Loc = new THREE.Object3D();
             scene.add(this.bondLeft_Loc);
-            // group.add(this.bondLeft_Loc);
             this.bondLeft_Obj = makeInstance(bond_Geo, bond_Color, leftArm_Pos);
             this.phosLeft_Obj = makeInstance(phos_Geo, phos_Color, phosLeft_Pos);
 
             // Base
             this.basePair_Loc = new THREE.Object3D();
+            this.basePair_Loc.name = "basePair_Loc";
             scene.add(this.basePair_Loc);
             group.add(this.basePair_Loc);
             this.base_Obj = makeInstance(base_Geo, base_Color, base_Pos);
+            this.base_Obj.name = "base_Obj";
 
             // Right Arm
             this.bondRight_Loc = new THREE.Object3D();
             scene.add(this.bondRight_Loc);
-            // group.add(this.bondRight_Loc);
             this.bondRight_Obj = makeInstance(bond_Geo, bond_Color, rightArm_Pos);
             this.phosRight_Obj = makeInstance(phos_Geo, phos_Color, phosRight_Pos);
 
+            this.rig();
+            this.addComponents();
+            this.addComponentsToBaseObjects();
+        }
+
+        rig() {
             // Rigging - Base
             this.basePair_Loc.add(this.base_Obj);
             this.basePair_Loc.add(this.bondLeft_Loc);
@@ -243,8 +251,6 @@ export function dnaObject(canvasSelector) {
             this.bondRight_Obj.position.x = 1;
             this.bondRight_Loc.add(this.bondRight_Obj);
             this.bondRight_Loc.add(this.phosRight_Obj);
-
-            this.addComponents();
         }
 
         addComponents() {
@@ -256,6 +262,12 @@ export function dnaObject(canvasSelector) {
             this.components.push(this.phosRight_Obj);
             this.components.push(this.base_Obj);
             this.components.push(this.basePair_Loc);
+        }
+
+        addComponentsToBaseObjects() {
+            this.components.forEach((obj) => {
+                baseObjects.push(obj);
+            });
         }
 
         addAxesHelper() {
@@ -346,64 +358,117 @@ export function dnaObject(canvasSelector) {
         }
     };
 
+    // class PickHelper {
+    //     constructor() {
+    //         this.raycaster = new THREE.Raycaster();
+    //         this.pickedObject = null;
+    //         this.pickedObjectSavedColor = 0;
+    //     }
+    //     pick(normalizedPosition, scene, camera, time) {
+    //         // restore the color if there is a picked object
+    //         if (this.pickedObject) {
+    //         this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
+    //         this.pickedObject = undefined;
+    //         }
+        
+    //         // cast a ray through the frustum
+    //         this.raycaster.setFromCamera(normalizedPosition, camera);
+    //         // get the list of objects the ray intersected
+    //         const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+    //         if (intersectedObjects.length) {
+    //         // pick the first object. It's the closest one
+    //         this.pickedObject = intersectedObjects[0].object;
+    //         // save its color
+    //         this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
+    //         // set its emissive color to flashing red/yellow
+    //         this.pickedObject.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
+    //         }
+    //     }
+    // }
     
+    // window.addEventListener('mousemove', setPickPosition);
+    // window.addEventListener('mouseout', clearPickPosition);
+    // window.addEventListener('mouseout', clearPickPosition);
+    // window.addEventListener('mouseleave', clearPickPosition);
+
+    // const pickPosition = {x: 0, y: 0};
+    // clearPickPosition();    
+    
+    // function setPickPosition(event) {
+    // pickPosition.x = (event.clientX / canvas.clientWidth ) *  2 - 1;
+    // pickPosition.y = (event.clientY / canvas.clientHeight) * -2 + 1;  // note we flip Y
+    // }
+    
+    // function clearPickPosition() {
+    // // unlike the mouse which always has a position
+    // // if the user stops touching the screen we want
+    // // to stop picking. For now we just pick a value
+    // // unlikely to pick something
+    // pickPosition.x = -100000;
+    // pickPosition.y = -100000;
+    // }
+
     // RAYCASTING
-    window.addEventListener( 'resize', onWindowResize, false );
-    window.addEventListener( "mousemove", onDocumentMouseMove, false );
+    // window.addEventListener( 'resize', onWindowResize, false );
+    // window.addEventListener( "mousemove", onDocumentMouseMove, false );
+    
 
-    // Responsive Display
-    function onWindowResize() {
-        const canvas = renderer.domElement;
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-            renderer.setSize(width, height, false);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        }
-    } 
+    // let selectedObject = null;
+    // let origColor = new THREE.Color(0x000000);
+    // let selectedColor = new THREE.Color(0xcc3311)
 
-    let selectedObject = null;
-    let origColor = new THREE.Color(0x000000);
-    let selectedColor = new THREE.Color(0xcc3311)
+    
 
-    function onDocumentMouseMove( event ) {
-        event.preventDefault();
-        if ( selectedObject ) {
-            selectedObject.material.color.set(origColor);
-            selectedObject = null;
-        }
+    // var raycaster = new THREE.Raycaster();
+    // var mouseVector = new THREE.Vector3();
 
-        var intersects = getIntersects( event.layerX, event.layerY );
+    // // Select objects
+    // function onDocumentMouseMove( event ) {
+    //     event.preventDefault();
+    //     if ( selectedObject ) {
+    //         selectedObject.material.color.set(origColor);
+    //         selectedObject = null;
+    //     }
 
-        if ( intersects.length > 0 ) {
-            var res = intersects.filter( function ( res ) {
-                return res && res.object;
-            } )[ 0 ];
+    //     var intersects = getIntersects( event.layerX, event.layerY );
+
+    //     if ( intersects.length > 0 ) {
+    //         var res = intersects.filter( function ( res ) {
+    //             return res && res.object;
+    //         } )[ 0 ];
             
-            if ( res && res.object ) {
-                selectedObject = res.object;
-                if(selectedObject.material.color.getHexString() !== selectedColor.getHexString()) {
-                    origColor.copy(selectedObject.material.color);
-                }
-                selectedObject.material.color.set(selectedColor);
-            }
-        }
-    }
+    //         if ( res && res.object ) {
+    //             selectedObject = res.object;
+    //             if(selectedObject.material.color.getHexString() !== selectedColor.getHexString()) {
+    //                 origColor.copy(selectedObject.material.color);
+    //             }
+    //             selectedObject.material.color.set(selectedColor);
+    //         }
+    //     }
+    // }
 
-    var raycaster = new THREE.Raycaster();
-    var mouseVector = new THREE.Vector3();
+    // // Responsive Display
+    // function onWindowResize() {
+    //     const canvas = renderer.domElement;
+    //     const width = canvas.clientWidth;
+    //     const height = canvas.clientHeight;
+    //     const needResize = canvas.width !== width || canvas.height !== height;
+    //     if (needResize) {
+    //         renderer.setSize(width, height, false);
+    //         camera.aspect = width / height;
+    //         camera.updateProjectionMatrix();
+    //     }
+    // } 
 
-    function getIntersects( x, y ) {
-        // x = ( x / window.innerWidth ) * 2 - 1;
-        // y = - ( y / window.innerHeight ) * 2 + 1;
-        x = ( x / canvas.width ) * 2 - 1;
-        y = - ( y / canvas.height ) * 2 + 1;
-        mouseVector.set( x, y, 0.5 );
-        raycaster.setFromCamera( mouseVector, camera );
-        return raycaster.intersectObject( group, true );
-    }
+    // function getIntersects( x, y ) {
+    //     // x = ( x / window.innerWidth ) * 2 - 1;
+    //     // y = - ( y / window.innerHeight ) * 2 + 1;
+    //     x = ( x / canvas.width ) * 2 - 1;
+    //     y = - ( y / canvas.height ) * 2 + 1;
+    //     mouseVector.set( x, y, 0.5 );
+    //     raycaster.setFromCamera( mouseVector, camera );
+    //     return raycaster.intersectObject( group, true );
+    // }
 
 
     /*****************************************
@@ -418,12 +483,15 @@ export function dnaObject(canvasSelector) {
     const base1 = new Base();
     const base2 = new Base();
     const base3 = new Base();
+    const base4 = new Base();
     base1.basePair_Loc.position.y = 1;
     base2.basePair_Loc.position.y = base1.basePair_Loc.position.y - BASE_DISTANCE_START;    
-    base3.basePair_Loc.position.y = base2.basePair_Loc.position.y - BASE_DISTANCE_START;    
+    base3.basePair_Loc.position.y = base2.basePair_Loc.position.y - BASE_DISTANCE_START;  
+    base4.basePair_Loc.position.y = base3.basePair_Loc.position.y - BASE_DISTANCE_START;    
     bases.push(base1);
     bases.push(base2);
     bases.push(base3);
+    bases.push(base4);
 
     // SPRINGS
     const springs = [];
@@ -443,6 +511,14 @@ export function dnaObject(canvasSelector) {
     springs.push(springL2);
     springs.push(springC2);
     springs.push(springR2);
+
+    // 2nd Group
+    const springL3 = new Spring(base3.phosLeft_Obj, base4.phosLeft_Obj);
+    const springC3 = new Spring(base3.base_Obj, base4.base_Obj);
+    const springR3 = new Spring(base3.phosRight_Obj, base4.phosRight_Obj);
+    springs.push(springL3);
+    springs.push(springC3);
+    springs.push(springR3);
 
     
     // AXIS HELPER
@@ -466,21 +542,57 @@ export function dnaObject(canvasSelector) {
         }
     }
     
+
+
+    // // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
+    // const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
+    // let stiffness = {k: -75};                                                           // Spring stiffness, in kg / s^2
+    // let spring_length = BASE_DISTANCE_START;                                            // Spring Equilibrium distance
+    // let damping = {b: -3.0};                                                            // Damping constant, in kg / s
+
+    // var topBase = {y: 1, v: 0, mass: 1};                                                // Object to hold Top Base Spring Data
+    // var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
+
+    // var springLoop = function(top, bot, firstInChain=true) {
+        
+    //     topBase.y = top.basePair_Loc.position.y;                                      // Grab Current Position
+    //     botBase.y = bot.basePair_Loc.position.y;
+
+    //     if(topBase.y - botBase.y != spring_length)                                      // If not in Equilibrium
+    //     {
+    //         let F_spring = stiffness.k * ((topBase.y - botBase.y) - spring_length);     // Springiness
+    //         let F_damper = damping.b * (topBase.v - botBase.v);                         // Damper Force
+
+    //         let a = (F_spring + F_damper) / topBase.mass;                               // Top Calc
+    //         topBase.v += a * framerate;
+    //         topBase.y += topBase.v * framerate;
+            
+    //         let c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
+    //         botBase.v -= c * framerate;
+    //         botBase.y += botBase.v * framerate;
+    //     }
+
+    //     top.basePair_Loc.position.y = topBase.y;                                      // Update Position of Bases
+    //     bot.basePair_Loc.position.y = botBase.y;
+    // };
+
+
     // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
     const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
-    let stiffness = {k: -20};                                                           // Spring stiffness, in kg / s^2
+    let stiffness = {k: -75};                                                           // Spring stiffness, in kg / s^2
     let spring_length = BASE_DISTANCE_START;                                            // Spring Equilibrium distance
-    let damping = {b: -0.5};                                                            // Damping constant, in kg / s
+    let damping = {b: -3.0};                                                            // Damping constant, in kg / s
+    let speed = 2.5;
 
-    var topBase = {y: 1, v: 0, mass: 1};                                                // Object to hold Top Base Spring Data
+    var topBase = {y: 1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                    // Object to hold Top Base Spring Data
     var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
 
-    var springLoop = function(top, bot) {
+    var springLoop = function(top, bot, firstInChain=false) {
         
         topBase.y = top.basePair_Loc.position.y;                                      // Grab Current Position
         botBase.y = bot.basePair_Loc.position.y;
 
-        if(topBase.y - botBase.y != spring_length)                                      // If not at Equilibrium
+        if(topBase.y - botBase.y != spring_length)                                      // If not in Equilibrium
         {
             let F_spring = stiffness.k * ((topBase.y - botBase.y) - spring_length);     // Springiness
             let F_damper = damping.b * (topBase.v - botBase.v);                         // Damper Force
@@ -488,16 +600,15 @@ export function dnaObject(canvasSelector) {
             let a = (F_spring + F_damper) / topBase.mass;                               // Top Calc
             topBase.v += a * framerate;
             topBase.y += topBase.v * framerate;
-            
+
             let c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
             botBase.v -= c * framerate;
-            botBase.y += botBase.v * framerate;
+            botBase.y += botBase.v * framerate * speed;                                 // Speed Multiplier added to smooth it out
         }
 
-        top.basePair_Loc.position.y = topBase.y;                                      // Update Position of Bases
+        top.basePair_Loc.position.y = topBase.y;                                        // Update Position of Bases
         bot.basePair_Loc.position.y = botBase.y;
     };
-
     
 
     // GUI 
@@ -556,29 +667,49 @@ export function dnaObject(canvasSelector) {
         checkAxesHelpers(value);
     });
 
-    gui.close();
+    // gui.close();     // Start GUI closed
     
-    // PAUSE RENDER - https://stackoverflow.com/questions/38034787/three-js-and-buttons-for-start-and-pause-animation
+    
+
+
+    // DRAGGING CONTROL
+    var dragControls = new THREE.DragControls( baseObjects, camera, renderer.domElement);
+    
+    // DRAGGING COLOR MANAGEMENT
+    var startColor;
+    dragControls.addEventListener( 'dragstart', dragStartCallback );
+    dragControls.addEventListener( 'dragend', dragEndCallback );    
+    function dragStartCallback(event) {                         // Changes Color to Selected
+        startColor = event.object.material.color.getHex();
+        event.object.material.color.setHex(0xff3311);    }
+
+    function dragEndCallback(event) {                           // Changes Color back to Original
+        event.object.material.color.setHex(startColor);
+    }
+
 
 
     // RENDER
     renderer.render(scene, camera);
+    // const pickHelper = new PickHelper();
 
     base1.basePair_Loc.position.y = 1.5;    // Start with a little springiness on load
 
     // RENDER UPDATE LOOP
     function render(time) {
-        time *= 0.001;  // converts time to seconds
+        time *= 0.001;                      // converts time to seconds
 
         resizeRendererToDisplaySize(renderer);
         
         // SPRINGS
-        springs.forEach((node) => {
+        springs.forEach((node) => {         // Update render of spring element
             node.update();
         })
-        springLoop(base1, base2);
+        springLoop(base1, base2, true);           // Springs physics       
         springLoop(base2, base3);
+        springLoop(base3, base4);
         
+        // pickHelper.pick(pickPosition, scene, camera, time);
         controls.update();
         requestAnimationFrame(render);
         renderer.render(scene, camera);
@@ -600,3 +731,5 @@ export function dnaObject(canvasSelector) {
     } 
 }
 
+
+// PAUSE RENDER - https://stackoverflow.com/questions/38034787/three-js-and-buttons-for-start-and-pause-animation
