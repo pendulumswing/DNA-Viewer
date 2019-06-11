@@ -64,7 +64,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
-	// Move Object
+	// DRAG - MOUSE  (MOVE OBJECT)
 	function onDocumentMouseMove( event ) {
 
 		event.preventDefault();
@@ -84,16 +84,12 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 				_fullPosition.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );				// JB Added
 				// _selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );		// OLD LINE - Object's position set to: intersection minus offset, with inverseMatrix applied
 				
-				
-				// console.log(_selected);
-
-				// Add code to get BasePair_Loc
 				_parent = _selected;
-				while(_parent.name !== 'basePair_Loc') {
+				while(_parent.name !== 'basePair_Loc') {														// Get the Root Object - 'basePair_Loc' (hard-coded)
 					_parent = _parent.parent;
 				}
 				
-				_parent.position.setY(_fullPosition.y);														// JB Added`- Constrain movement to Y axis								`
+				_parent.position.setY(_fullPosition.y);															// JB Added`- Constrain movement to Y axis							`
 
 			}
 
@@ -103,6 +99,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		}
 
+		// HOVER POINTER STYLE
 		_raycaster.setFromCamera( _mouse, _camera );
 
 		var intersects = _raycaster.intersectObjects( _objects );
@@ -133,7 +130,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 		}
 	}
 
-	// Select Object
+	// DRAG START - MOUSE  (SELECT OBJECT)
 	function onDocumentMouseDown( event ) {
 
 		event.preventDefault();										// Prevents default behaviour of this event
@@ -161,6 +158,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
+	// DRAGEND - MOUSE
 	function onDocumentMouseCancel( event ) {
 
 		event.preventDefault();
@@ -177,6 +175,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
+	// DRAG - TOUCH
 	function onDocumentTouchMove( event ) {
 
 		event.preventDefault();
@@ -205,6 +204,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
+	// MOVE OBJECT - TOUCH
 	function onDocumentTouchStart( event ) {
 
 		event.preventDefault();
@@ -241,6 +241,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
+	// DRAGEND _ TOUCH
 	function onDocumentTouchEnd( event ) {
 
 		event.preventDefault();
@@ -257,12 +258,12 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 	}
 
+	// ADD LISTENERS
 	activate();
 
+
 	// API
-
 	this.enabled = true;
-
 	this.activate = activate;
 	this.deactivate = deactivate;
 	this.dispose = dispose;

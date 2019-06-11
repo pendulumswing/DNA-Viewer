@@ -92,8 +92,8 @@ export function dnaObject(canvasSelector) {
     guiContainer.appendChild(gui.domElement);
     
     // CONTROLS - ORBITAL
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.update();
+    var orbControls = new THREE.OrbitControls(camera, renderer.domElement);
+    orbControls.update();
 
     // SCENE
     const scene = new THREE.Scene();
@@ -577,19 +577,21 @@ export function dnaObject(canvasSelector) {
     // };
 
 
+
+
     // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
     const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
     let stiffness = {k: -75};                                                           // Spring stiffness, in kg / s^2
     let spring_length = BASE_DISTANCE_START;                                            // Spring Equilibrium distance
-    let damping = {b: -3.0};                                                            // Damping constant, in kg / s
+    let damping = {b: -4.0};                                                            // Damping constant, in kg / s
     let speed = 2.5;
 
     var topBase = {y: 1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                    // Object to hold Top Base Spring Data
     var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
 
-    var springLoop = function(top, bot, firstInChain=false) {
+    var springLoop = function(top, bot, lastInChain=false) {
         
-        topBase.y = top.basePair_Loc.position.y;                                      // Grab Current Position
+        topBase.y = top.basePair_Loc.position.y;                                        // Grab Current Position
         botBase.y = bot.basePair_Loc.position.y;
 
         if(topBase.y - botBase.y != spring_length)                                      // If not in Equilibrium
@@ -601,7 +603,12 @@ export function dnaObject(canvasSelector) {
             topBase.v += a * framerate;
             topBase.y += topBase.v * framerate;
 
-            let c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
+            let c;
+            if(lastInChain) {
+                c = (F_spring + F_damper) / (botBase.mass * 2);                               // Bottom Calc    
+            } else {
+                c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
+            }
             botBase.v -= c * framerate;
             botBase.y += botBase.v * framerate * speed;                                 // Speed Multiplier added to smooth it out
         }
@@ -611,12 +618,20 @@ export function dnaObject(canvasSelector) {
     };
     
 
+
+
+
     // GUI 
+    const orbitToggle = {enabled: true};
     const trans = {x:0, y:0, z:0};
     const harmonicRot = {x:0, y:0, z:0}; 
     const dihedralRot = {x:0, y:0, z:0};  
     let showSprings = {visible: true};
     let showAxes = {visible: false};
+
+    gui.add(orbitToggle, "enabled").name('Orbital Controls').onChange( function(value) {     // SOURCE: https://bit.ly/2I4pqbM
+        orbControls.enabled = value;
+    });
 
     gui.add(harmonicRot, "y", -1.000, 1.000).name('Angle').onChange( function(value) {     // SOURCE: https://bit.ly/2I4pqbM
         bases.forEach((base) => {
@@ -647,7 +662,7 @@ export function dnaObject(canvasSelector) {
     
     let springOptionsGuiFolder = gui.addFolder('Spring Options');
 
-    springOptionsGuiFolder.add(damping, "b", -5.000, 0.000).name('Damping').onChange( function(value) {  
+    springOptionsGuiFolder.add(damping, "b", -8.000, 0.000).name('Damping').onChange( function(value) {  
         damping.b = value;
     });
 
@@ -670,6 +685,7 @@ export function dnaObject(canvasSelector) {
     // gui.close();     // Start GUI closed
     
     
+
 
 
     // DRAGGING CONTROL
@@ -705,12 +721,12 @@ export function dnaObject(canvasSelector) {
         springs.forEach((node) => {         // Update render of spring element
             node.update();
         })
-        springLoop(base1, base2, true);           // Springs physics       
+        springLoop(base1, base2);           // Springs physics       
         springLoop(base2, base3);
-        springLoop(base3, base4);
+        springLoop(base3, base4, true);
         
         // pickHelper.pick(pickPosition, scene, camera, time);
-        controls.update();
+        orbControls.update();
         requestAnimationFrame(render);
         renderer.render(scene, camera);
     }
@@ -733,3 +749,5 @@ export function dnaObject(canvasSelector) {
 
 
 // PAUSE RENDER - https://stackoverflow.com/questions/38034787/three-js-and-buttons-for-start-and-pause-animation
+
+
