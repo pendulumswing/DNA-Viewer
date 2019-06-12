@@ -5,10 +5,14 @@ DNA Bases - Creates an interactive 3D pair of Base Pairs.
 
 'use strict';
 
-import {Base} from './dnaObjects.js';
-import {Spring} from './dnaObjects.js';
+// import {Base} from './dnaObjects.js';
+// import {Spring} from './dnaObjects.js';
+// import Base from './Base.js';
+
+// import Spring from './Spring.js';
 // import {} from './dnaObjects.js';
 // import { GeometryUtils } from "three";
+import utils from './utils.js';
 
 // import * as THREE from 'three';
 
@@ -41,11 +45,17 @@ function degToRad(degrees) {
   return degrees * (pi/180);
 };
 
+
 export function dnaObject(canvasSelector) {
 
     // CANVAS
     const canvas = document.querySelector(canvasSelector);
     let aspect = 2;
+
+    var rads = utils.degToRad(90);
+    console.log(rads);
+
+    
 
     // SQUARE ASPECT PROFILE
     // {   
