@@ -1,4 +1,4 @@
-import * as THREE from '../build/three.js';
+import * as THREE from 'three';
 import degToRad from '../utils/degToRad';
 import makeInstance from '../utils/makeInstance';
 import BASE_DISTANCE_START from '../constants/BASE_DISTANCE_START';

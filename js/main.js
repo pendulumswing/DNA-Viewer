@@ -2,12 +2,20 @@
 
 'use strict';
 
-import {dnaObject} from './dnaObject.js';
+import {dnaObject, Canvas} from './dnaObject.js';
+// import {Canvas} from './dnaObject.js';
 
 function main() {
     
-    let val = dnaObject('#c');    
+    let c = new Canvas('#c', 1);
+    let canvas = c.canvas;
+    let aspect = c.aspect;
     
+    let renderer = new THREE.WebGLRenderer({canvas});
+
+    // let val = dnaObject('#c', 1);   
+    // console.log(c.canvas + ", " + c.aspect);
+    let val = dnaObject(c, renderer);        
 }
 
 main();
