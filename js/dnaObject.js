@@ -106,17 +106,22 @@ export class DNAObject {
         // Lists
         this.components = [];
         this.axesHelpers = [];
-
+        this.scene = scene;
     }
 
     dispose() {                             // Dispose of assets not collected by GC
-        components.forEach(node => {
+        console.log("Dispose called")
+        this.components.forEach(node => {
             if(node.geometry) {
-                node.material.dispose();
+                console.log("Node: Geo: " + node.name + ", " + node.geometry);
+                node.geometry.dispose();
+                console.log("Node: Geo: " + node.name + ", " + node.geometry);
             }
             if(node.material) {
-                node.geometry.dispose();
-            }           
+                console.log("Node: Mat: " + node.name + ", " + node.material);
+                node.material.dispose();
+                console.log("Node: Mat: " + node.name + ", " + node.material);
+            }        
         });
     }
 
@@ -165,7 +170,7 @@ export class DNAObject {
 export class Base extends DNAObject {       
     constructor(scene) {
 
-        super(scene);
+        super(scene);        
 
         // Geometry Parameters
         this.baseDistanceAtStart = 1.1;
@@ -215,6 +220,8 @@ export class Base extends DNAObject {
         this.addComponents();
         this.addObjectsToScene(scene);
         this.rig();
+
+        // return {getYPos: this.basePair_Loc.y};
     }
 
     rig() {
@@ -254,6 +261,18 @@ export class Base extends DNAObject {
     setPosY(value) {
         this.basePair_Loc.position.y = value;
     }
+
+    getPosY() {
+        return this.basePair_Loc.position.y;
+    }
+
+    setRotY(value) {
+        this.basePair_Loc.rotation.y = value;
+    }
+
+    getRotY() {
+        return this.basePair_Loc.rotation.y;
+    }
 };
 
 // SPRING
@@ -261,6 +280,13 @@ export class Spring extends DNAObject {
     constructor(scene, top, bot) {
 
         super(scene);
+
+        // Spring Properties
+        this.framerate = 1/60;                                                             // Framerate to calculate how much to move each update
+        this.stiffness = {k: -175};                                                           // Spring stiffness, in kg / s^2
+        this.springLength = 1.1;                                   // Spring Equilibrium distance
+        this.damping = {b: -25.0};                                                            // Damping constant, in kg / s
+        this.speed = 2.5;
 
         // Parameters
         this.baseDistanceAtStart = 1.1;
@@ -316,6 +342,50 @@ export class Spring extends DNAObject {
         this.components.push(this.topAtom_Loc);
         this.components.push(this.spring_Obj);
     }
+
+    springSimulate(topObject, botObject, lastInChain=false) {
+        
+
+        this.top = {y: 1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                    // Object to hold Top Base Spring Data
+        this.bot = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
+
+        this.top.y = topObject.getPosY();                                        // Grab Current Position
+        this.bot.y = botObject.getPosY();
+
+        if(this.top.y - this.bot.y != this.springLength)                                      // If not in Equilibrium
+        {
+            this.F_spring = this.stiffness.k * ((this.top.y - this.bot.y) - this.springLength);     // Springiness
+            this.F_damper = this.damping.b * (this.top.v - this.bot.v);                         // Damper Force
+
+            this.a = (this.F_spring + this.F_damper) / this.top.mass;                               // Top Calc
+            this.top.v += this.a * this.framerate;
+            this.top.y += this.top.v * this.framerate;
+
+            this.c;
+            if(lastInChain) {
+                this.c = (this.F_spring + this.F_damper) / (this.bot.mass );                               // Bottom Calc    
+            } else {
+                this.c = (this.F_spring + this.F_damper) / this.bot.mass;                               // Bottom Calc
+            }
+            this.bot.v -= this.c * this.framerate;
+            this.bot.y += this.bot.v * this.framerate * this.speed;                                 // Speed Multiplier added to smooth it out
+        }
+
+        topObject.setPosY(this.top.y);                                        // Update Position of Bases
+        botObject.setPosY(this.bot.y);
+    }
+
+    setStiffness(value) {
+        this.stiffness.k = value;
+    }
+
+    setDamping(value) {
+        this.damping.b = value;
+    }
+
+    setSpringLength(value) {
+        this.springLength = value;
+    }
 };
 
 
@@ -340,9 +410,7 @@ export function dnaObject(canvas, renderer) {
     const guiContainer = document.getElementById('gui');
     guiContainer.appendChild(gui.domElement);
     
-    // CONTROLS - ORBITAL
-    var orbControls = new THREE.OrbitControls(camera, renderer.domElement);
-    orbControls.update();
+    
 
     // SCENE
     const scene = new THREE.Scene();
@@ -396,7 +464,7 @@ export function dnaObject(canvas, renderer) {
     // BASES
     const bases = [];
     const baseObjects = [];
-    const baseCount = 8;
+    const baseCount = 20;
     
     function createBases(numBases) {
         for(var i = 0; i < numBases; i++) {
@@ -440,81 +508,6 @@ export function dnaObject(canvas, renderer) {
 
     /**********************************************************************************/
     
-    
-
-
-    // // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
-    // const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
-    // let stiffness = {k: -75};                                                           // Spring stiffness, in kg / s^2
-    // let spring_length = baseDistanceAtStart;                                            // Spring Equilibrium distance
-    // let damping = {b: -3.0};                                                            // Damping constant, in kg / s
-
-    // var topBase = {y: 1, v: 0, mass: 1};                                                // Object to hold Top Base Spring Data
-    // var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
-
-    // var springLoop = function(top, bot, firstInChain=true) {
-        
-    //     topBase.y = top.basePair_Loc.position.y;                                      // Grab Current Position
-    //     botBase.y = bot.basePair_Loc.position.y;
-
-    //     if(topBase.y - botBase.y != spring_length)                                      // If not in Equilibrium
-    //     {
-    //         let F_spring = stiffness.k * ((topBase.y - botBase.y) - spring_length);     // Springiness
-    //         let F_damper = damping.b * (topBase.v - botBase.v);                         // Damper Force
-
-    //         let a = (F_spring + F_damper) / topBase.mass;                               // Top Calc
-    //         topBase.v += a * framerate;
-    //         topBase.y += topBase.v * framerate;
-            
-    //         let c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
-    //         botBase.v -= c * framerate;
-    //         botBase.y += botBase.v * framerate;
-    //     }
-
-    //     top.basePair_Loc.position.y = topBase.y;                                      // Update Position of Bases
-    //     bot.basePair_Loc.position.y = botBase.y;
-    // };
-
-
-
-
-    // SPRING SIM                                                                       SOURCE: https://bit.ly/2WsQA5z
-    const framerate = 1/60;                                                             // Framerate to calculate how much to move each update
-    let stiffness = {k: -75};                                                           // Spring stiffness, in kg / s^2
-    let spring_length = bases[0].baseDistanceAtStart;                                            // Spring Equilibrium distance
-    let damping = {b: -4.0};                                                            // Damping constant, in kg / s
-    let speed = 2.5;
-
-    var topBase = {y: 1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                    // Object to hold Top Base Spring Data
-    var botBase = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data
-
-    var springLoop = function(top, bot, lastInChain=false) {
-        
-        topBase.y = top.basePair_Loc.position.y;                                        // Grab Current Position
-        botBase.y = bot.basePair_Loc.position.y;
-
-        if(topBase.y - botBase.y != spring_length)                                      // If not in Equilibrium
-        {
-            let F_spring = stiffness.k * ((topBase.y - botBase.y) - spring_length);     // Springiness
-            let F_damper = damping.b * (topBase.v - botBase.v);                         // Damper Force
-
-            let a = (F_spring + F_damper) / topBase.mass;                               // Top Calc
-            topBase.v += a * framerate;
-            topBase.y += topBase.v * framerate;
-
-            let c;
-            if(lastInChain) {
-                c = (F_spring + F_damper) / (botBase.mass * 2);                               // Bottom Calc    
-            } else {
-                c = (F_spring + F_damper) / botBase.mass;                               // Bottom Calc
-            }
-            botBase.v -= c * framerate;
-            botBase.y += botBase.v * framerate * speed;                                 // Speed Multiplier added to smooth it out
-        }
-
-        top.basePair_Loc.position.y = topBase.y;                                        // Update Position of Bases
-        bot.basePair_Loc.position.y = botBase.y;
-    };
 
 
 
@@ -525,6 +518,11 @@ export function dnaObject(canvas, renderer) {
     const dihedralRot = {x:0, y:0, z:0};  
     let showSprings = {visible: true};
     let showAxes = {visible: false};
+    let stiffness = {k: -175};                                                           // Spring stiffness, in kg / s^2
+    let damping = {b: -25.0};
+    let springLength = {l: 1.1};
+    const baseDispose = {dispose: false};
+    const springDispose = {dispose: false};
 
     // GUI - ORBITAL CONTROLS
     gui.add(orbitToggle, "enabled").name('Orbital Controls').onChange( function(value) {     // SOURCE: https://bit.ly/2I4pqbM
@@ -541,37 +539,49 @@ export function dnaObject(canvas, renderer) {
     
     //GUI - DIHEDRAL
     gui.add(dihedralRot, "y", -1.000, 1.000).name('Dihedral').onChange( function(value) {  
-        bases[0].basePair_Loc.rotation.y = value;
+        bases[0].setRotY(value);
         for(let i = 0; i < Object.keys(bases).length; i++) {
             if(i === 0) {
-                bases[i].basePair_Loc.rotation.y = value;
+                bases[i].setRotY(value);
             }
             if(i > 1) {
                 if(value !== 0) {
                     let angle = (i - 1) * -value;
-                    bases[i].basePair_Loc.rotation.y = angle;
+                    bases[i].setRotY(angle);
                 }
             }
         }
     });
 
     // GUI - MOVE
-    gui.add(trans, "y", -2.0, 2.0).name('Move').onChange( function(value) {    
+    gui.add(trans, "y", -2.0, 5.0).name('Move').onChange( function(value) {    
         const basePair_LocPosY = 1;
         bases[0].setPosY(value * 1 + basePair_LocPosY);
     });
     
     // GUI - FOLDER - SPRING OPTIONS
     let springOptionsGuiFolder = gui.addFolder('Spring Options');
+    springOptionsGuiFolder.open();
 
     // GUI - DAMPING
-    springOptionsGuiFolder.add(damping, "b", -8.000, 0.000).name('Damping').onChange( function(value) {  
-        damping.b = value;
+    springOptionsGuiFolder.add(damping, "b", -30.000, 0.000).name('Damping').onChange( function(value) {  
+        springs.forEach(node => {
+            node.setDamping(value);
+        });
     });
 
     // GUI - STIFFNESS
-    springOptionsGuiFolder.add(stiffness, "k", -100, 0).name('Stiffness').onChange( function(value) {    
-        stiffness.k = value;
+    springOptionsGuiFolder.add(stiffness, "k", -200, 0).name('Stiffness').onChange( function(value) {    
+        springs.forEach(node => {
+            node.setStiffness(value);
+        });
+    });
+
+    // GUI - ERUILIBRIUM LENGTH
+    springOptionsGuiFolder.add(springLength, "l", 0.1, 2.5).name('Spring Length').onChange( function(value) {    
+        springs.forEach(node => {
+            node.setSpringLength(value);
+        });
     });
 
     // GUI - VISIBLE
@@ -583,6 +593,7 @@ export function dnaObject(canvas, renderer) {
 
     // GUI - FOLDER - DEBUG
     let debugGuiFolder = gui.addFolder('Debug');
+    debugGuiFolder.open();
 
     // GUI - SHOW AXES
     debugGuiFolder.add(showAxes, "visible").name('Show Axes').onChange( function(value) {  
@@ -609,6 +620,26 @@ export function dnaObject(canvas, renderer) {
         checkAxesHelpers(value);
     });
 
+    // GUI - DISPOSE BASES
+    debugGuiFolder.add(baseDispose, "dispose").name('Dispose of Bases').onChange( function(value) {  
+        if(value) {
+            bases.forEach((node) => {
+                node.dispose();
+                console.log("Base Node Disposed");
+            })
+        }
+    });
+
+    // GUI - DISPOSE SPRINGS
+    debugGuiFolder.add(springDispose, "dispose").name('Dispose of Springs').onChange( function(value) {  
+        if(value) {
+            springs.forEach((node) => {
+                node.dispose();
+                console.log("Spring Node Disposed");
+            })
+        }
+    });
+
     // gui.close();     // Start GUI closed
     
     
@@ -630,7 +661,18 @@ export function dnaObject(canvas, renderer) {
         event.object.material.color.setHex(startColor);
     }
 
-
+    // Update Camera Focus to center of Chain
+    const baseToLookAt = parseInt(bases.length / 2);
+    const cameraZoomFactor = 2.5;
+    let vectorTemp = new THREE.Vector3();
+    bases[baseToLookAt].basePair_Loc.getWorldPosition(vectorTemp);
+    camera.lookAt(vectorTemp);
+    console.log("ZOOM: " + camera.zoom);
+    camera.zoom = .5;
+    console.log("ZOOM: " + camera.zoom);
+    camera.position.setX(camera.position.x + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
+    camera.position.setY(camera.position.y + cameraZoomFactor * baseToLookAt * 0.25); // + cameraZoomFactor * baseToLookAt;
+    camera.position.setZ(camera.position.z + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
     
 
     // RENDER
@@ -638,6 +680,11 @@ export function dnaObject(canvas, renderer) {
     // const pickHelper = new PickHelper();
 
     bases[0].setPosY(1.5);    // Start with a little springiness on load
+
+    // CONTROLS - ORBITAL
+    var orbControls = new THREE.OrbitControls(camera, renderer.domElement);
+    orbControls.target = vectorTemp;
+    orbControls.update();
 
     // RENDER UPDATE LOOP
     function render(time) {
@@ -651,13 +698,16 @@ export function dnaObject(canvas, renderer) {
         })
 
         for(var i = 0; i < springGroupsCount; i++) {
-            if(i !== springGroupsCount - 1) {
-                springLoop(bases[i], bases[i + 1]);
+            if(i !== springGroupsCount - 1) {             
+                springs[i].springSimulate(bases[i], bases[i + 1]);
             } else {
-                springLoop(bases[i], bases[i + 1], true);
+                springs[i].springSimulate(bases[i], bases[i + 1], true);
             }
         }
         
+        // console.log("Camera POS: " + camera.position.z + ", " + camera.position.y + ", " + camera.position.z);
+        // console.log("Camera ZOOM: " + camera.zoom);
+
         orbControls.update();
         requestAnimationFrame(render);
         renderer.render(scene, camera);
