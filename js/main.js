@@ -2,7 +2,7 @@
 
 'use strict';
 
-import {dnaObject, Canvas} from './dnaObject.js';
+import {dnaObject, Canvas, DNAObject, Base, Spring} from './dnaObject.js';
 // import {Canvas} from './dnaObject.js';
 
 function main() {
