@@ -54,7 +54,7 @@ export class Canvas {
         // CANVAS
         this.aspect = aspect;
         this.canvas = document.querySelector(canvasSelector);
-        console.log("Aspect: " + this.canvas.aspect);
+        console.log("Aspect of Canvas Object: " + this.canvas.aspect);
         this.parent = this.canvas.parentElement;
         this.style = getComputedStyle(this.parent); 
         this.num = parseFloat(this.style.width, 10);
@@ -71,7 +71,7 @@ export class Canvas {
                     this.canvas.height = this.num;
                     this.canvas.width = this.num;
                     this.aspect = this.canvas.width / this.canvas.height;
-                    this.canvas.aspect = this.canvas / this.canvas.height;
+                    // this.canvas.aspect = this.canvas / this.canvas.height;
                 }
                 break;
 
@@ -80,7 +80,7 @@ export class Canvas {
                     this.canvas.height = this.num * .75;
                     this.canvas.width = this.num;
                     this.aspect = this.canvas.width / this.canvas.height;
-                    this.canvas.aspect = this.canvas / this.canvas.height;
+                    // this.canvas.aspect = this.canvas / this.canvas.height;
                 }
                 break;
 
@@ -89,13 +89,25 @@ export class Canvas {
                     this.canvas.height = window.innerHeight;
                     this.canvas.width = window.innerWidth;
                     this.aspect = this.canvas.width / this.canvas.height;
-                    this.canvas.aspect = this.canvas / this.canvas.height;
+                    // this.canvas.aspect = this.canvas / this.canvas.height;
                 }
                 break;
 
             default:
                 break;
         };   
+    }
+
+    getParentDim() {
+        this.pHeight = this.parent.clientHeight;
+        this.pWidth = this.parent.clientWidth;
+        // this.needResize = this.canvas.width !== this.pWidth || this.canvas.height !== this.pHeight;
+        // console.log("Client width: " + this.pWidth);
+        // console.log("Canvas Width: " + this.canvas.width);
+        // console.log("Client height: " + this.pHeight);
+        // console.log("Canvas height: " + this.canvas.height);
+        
+        return {pWidth: this.pWidth, pHeight:this.pHeight};
     }
 }
 

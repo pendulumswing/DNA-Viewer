@@ -10,20 +10,26 @@ import {Canvas, Base, Spring} from './dnaObjectClasses.js';
 
 export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
 
-    let c = new Canvas(canvasID, aspect);        // Arguments: Canvas HTML Element, Aspect Ratio
-    let canvas = c.canvas;
+    const c = new Canvas(canvasID, aspect);        // Arguments: Canvas HTML Element, Aspect Ratio
+    const canvas = c.canvas;
+
+    // const canvas = document.querySelector(canvasID);
+    
 
     // RENDERER    
     const renderer = new THREE.WebGLRenderer({canvas});
 
-    console.log("CANVAS: " + canvas);
+    console.log("CANVAS: " + canvas.width + ", " + canvas.height);
 
     // CAMERA
     const fov = 30;
     const near = 0.1;
     const far = 500;
     const camera = new THREE.PerspectiveCamera(fov, c.aspect, near, far);
-    camera.position.set(10,3,15);
+    const cameraPosXStart = 10;
+    const cameraPosYStart = 3;
+    const cameraPosZStart = 15;
+    camera.position.set(cameraPosXStart, cameraPosYStart, cameraPosZStart);
     camera.lookAt(0,-1,0);
     camera.up.set(0,1,0);  
 
@@ -293,22 +299,20 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
 
         const baseToLookAt = parseInt(baseList.length / 2);
         const cameraZoomFactor = 2.5;
-        let baseInCenterOfChain = new THREE.Vector3();
-        baseList[baseToLookAt].basePair_Loc.getWorldPosition(baseInCenterOfChain);
-        camera.lookAt(baseInCenterOfChain);
+        let basePosInCenterOfChain = new THREE.Vector3();
+        baseList[baseToLookAt].basePair_Loc.getWorldPosition(basePosInCenterOfChain);
+        camera.lookAt(basePosInCenterOfChain);
         // console.log("ZOOM: " + camera.zoom);
-        camera.zoom = .5;
+        camera.zoom = 1;
         // console.log("ZOOM: " + camera.zoom);
-        camera.position.setX(camera.position.x + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
-        camera.position.setY(camera.position.y + cameraZoomFactor * baseToLookAt * 0.25); // + cameraZoomFactor * baseToLookAt;
-        camera.position.setZ(camera.position.z + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
+        camera.position.setX(cameraPosXStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
+        camera.position.setY(cameraPosYStart + cameraZoomFactor * baseToLookAt * 0.25); // + cameraZoomFactor * baseToLookAt;
+        camera.position.setZ(cameraPosZStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
 
-        return baseInCenterOfChain;
+        return basePosInCenterOfChain;
     }
-    
-    let centerBase = cameraFocusFrame(bases);
 
-    
+    const centerBase = cameraFocusFrame(bases);
     // const pickHelper = new PickHelper();
 
     bases[0].setPosY(1.5);    // Start with a little springiness on load
@@ -325,33 +329,22 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
      *      RENDER
      * 
      **********************************************************************************/
+    
+    
     renderer.render(scene, camera);
-
-    function resizeRendererToDisplaySize(renderer) {
-        let canvas = renderer.domElement;
-        let width = canvas.clientWidth;
-        let height = canvas.clientHeight;
-        let needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-            renderer.setSize(width, height, false);
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-        }
-        return needResize;
-    }
-
-
 
     // RENDER UPDATE LOOP
     function render(time) {
         time *= 0.001;                          // Convert Time to seconds
-        // resizeRendererToDisplaySize(renderer);  // Responsive Display   
-        
-        if (resizeRendererToDisplaySize(renderer)) {
-            let canvas = renderer.domElement;
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-        }
+        resizeRendererToDisplaySize(renderer);  // Responsive Display   
+
+        // if (resizeRendererToDisplaySize(renderer)) {
+        //     const canvas = renderer.domElement;
+        //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        //     camera.updateProjectionMatrix();
+        //   }
+
+        // cameraFocusFrame(bases);
         
         springs.forEach((node) => {             // Springs - Appearance
             node.update();
@@ -372,18 +365,27 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
     requestAnimationFrame(render);
     
     // Responsive Display
+    function resizeRendererToDisplaySize(renderer) {
+        let rend = renderer.domElement;
+        let width = rend.clientWidth;
+        let height = rend.clientHeight;
+        let needResize = rend.width !== width || rend.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+            camera.aspect = rend.clientWidth / rend.clientHeight;
+            camera.updateProjectionMatrix();            
+        }
+        return needResize;
+    }
+
+
+    // Responsive Display
     // function resizeRendererToDisplaySize(renderer) {
     //     let canvas = renderer.domElement;
-    //     // console.log("CANVAS: " + canvas);
     //     let width = canvas.clientWidth;
     //     let height = canvas.clientHeight;
-    //     // console.log("WIDTH: " + width);
-    //     // console.log("HEIGHT: " + height);
-    //     // console.log("CANVAS WIDTH: " + canvas.width);
-    //     // console.log("CANVAS HEIGHT: " + canvas.height);
     //     let needResize = canvas.width !== width || canvas.height !== height;
     //     if (needResize) {
-    //         // console.log("NEEDS RESIZE");
     //         renderer.setSize(width, height, false);
     //         camera.aspect = width / height;
     //         camera.updateProjectionMatrix();
