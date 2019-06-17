@@ -38,12 +38,19 @@ html, body {
     max-height: 800px;
 }
 
-#gui {
+.gui {
     position: absolute;
     top: 0px;
     right: 0px;
     z-index: 10;
 }
+
+/* #gui {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 10;
+} */
 
 #reset {   
     position: absolute;
