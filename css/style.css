@@ -34,8 +34,8 @@ html, body {
 .animDiv {
     margin: 30px;       /* Use margin instead of padding for raycasting to work */
     position: relative;
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 1000px;
+    max-height: 1000px;
 }
 
 .gui {

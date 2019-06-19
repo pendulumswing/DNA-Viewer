@@ -9,7 +9,7 @@ import {dnaObject} from './dnaObject.js';
 function main() {
     
     {
-        let anim1 = dnaObject('#c1', '#gui1', 1, 5);     // ARGUMENTS: Canvas HTML Element, GUI HTML Element ID, Aspect Ratio, Number of Bases     
+        let anim1 = dnaObject('#c1', '#gui1', 1.5, 5);     // ARGUMENTS: Canvas HTML Element, GUI HTML Element ID, Aspect Ratio, Number of Bases     
     }
 
     {
