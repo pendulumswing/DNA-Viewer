@@ -1,17 +1,17 @@
 {
-  "name": "threejs_experiment",
+  "name": "dna_viewer",
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
   "author": "",
   "description": "Place to try out Git and Three JS",
-  "homepage": "https://github.com/pendulumswing/ThreeJS_Experiment#readme",
+  "homepage": "https://github.com/pendulumswing/DNA-Viewer#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pendulumswing/ThreeJS_Experiment.git"
+    "url": "git+https://github.com/pendulumswing/DNA-Viewer.git"
   },
   "bugs": {
-    "url": "https://github.com/pendulumswing/ThreeJS_Experiment/issues"
+    "url": "https://github.com/pendulumswing/DNA-Viewer/issues"
   },
   "keywords": [],
   "scripts": {

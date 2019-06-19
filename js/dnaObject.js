@@ -5,7 +5,13 @@ DNA Bases - Creates an interactive 3D pair of Base Pairs.
 
 'use strict';
 
-import {Canvas, Base, Spring} from './dnaObjectClasses.js';
+// import {Canvas, Base, Spring} from './dnaObjectClasses.js';
+
+import Spring from './classes/Spring.js';
+import Base from './classes/Base.js';
+import Canvas from './classes/Canvas.js';
+import Constants from './constants/Constants.js';
+import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
 
 
 export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
@@ -336,13 +342,13 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
     // RENDER UPDATE LOOP
     function render(time) {
         time *= 0.001;                          // Convert Time to seconds
-        resizeRendererToDisplaySize(renderer);  // Responsive Display   
+        // resizeRendererToDisplaySize(renderer);  // Responsive Display   
 
-        // if (resizeRendererToDisplaySize(renderer)) {
-        //     const canvas = renderer.domElement;
-        //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        //     camera.updateProjectionMatrix();
-        //   }
+        if (resizeRendererToDisplaySize(renderer)) {
+            const rend = renderer.domElement;
+            camera.aspect = rend.clientWidth / rend.clientHeight;
+            camera.updateProjectionMatrix();
+          }
 
         // cameraFocusFrame(bases);
         
@@ -362,39 +368,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
         requestAnimationFrame(render);          // Animation frame
         renderer.render(scene, camera);         // Render
     }
-    requestAnimationFrame(render);
-    
-    // Responsive Display
-    function resizeRendererToDisplaySize(renderer) {
-        let rend = renderer.domElement;
-        let width = rend.clientWidth;
-        let height = rend.clientHeight;
-        let needResize = rend.width !== width || rend.height !== height;
-        if (needResize) {
-            renderer.setSize(width, height, false);
-            camera.aspect = rend.clientWidth / rend.clientHeight;
-            camera.updateProjectionMatrix();            
-        }
-        return needResize;
-    }
-
-
-    // Responsive Display
-    // function resizeRendererToDisplaySize(renderer) {
-    //     let canvas = renderer.domElement;
-    //     let width = canvas.clientWidth;
-    //     let height = canvas.clientHeight;
-    //     let needResize = canvas.width !== width || canvas.height !== height;
-    //     if (needResize) {
-    //         renderer.setSize(width, height, false);
-    //         camera.aspect = width / height;
-    //         camera.updateProjectionMatrix();
-    //     }
-    //     return needResize;
-    // } 
-
-    
-    
+    requestAnimationFrame(render);   
 }
 
 
