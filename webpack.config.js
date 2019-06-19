@@ -41,9 +41,11 @@ module.exports = function(env) {
         'bundle.[name].[chunkhash].js',
         'bundle.[name].js'
       ),
-      path: path.resolve('dist'),
+      // path: path.resolve('dist'),
+      path: path.join(__dirname, 'dist'),
       pathinfo: ifNotProduction(),
-      publicPath: `${BASENAME}/`
+      publicPath: `${BASENAME}/`                                // <-- Works for Dev Server
+      // publicPath: (process.env.NODE_ENV==='dev'?'/':'./')    // <-- Works for Production
     },
     resolve: {
       alias: {

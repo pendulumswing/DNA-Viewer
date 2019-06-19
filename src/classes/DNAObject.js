@@ -1,5 +1,5 @@
 
-// import * as THREE from 'three';
+import * as THREE from 'three';
 
 // DNAOBJECT - BASE CLASS
 export default class DNAObject {       

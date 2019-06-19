@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import DNAObject from './DNAObject.js';
 import degToRad from '../utils/degToRad.js';
 // import BASE_DISTANCE_START from '../constants/BASE_DISTANCE_START';

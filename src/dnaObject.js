@@ -6,6 +6,10 @@ DNA Bases - Creates an interactive 3D pair of Base Pairs.
 'use strict';
 
 // import {Canvas, Base, Spring} from './dnaObjectClasses.js';
+import * as THREE from 'three';
+import * as dat from 'dat.gui';
+import OrbitControls from 'three-orbitcontrols';
+import DragControls from 'three-dragcontrols';
 
 import Spring from './classes/Spring.js';
 import Base from './classes/Base.js';
@@ -284,7 +288,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
      **********************************************************************************/
 
     // DRAGGING CONTROL
-    var dragControls = new THREE.DragControls( baseObjects, camera, renderer.domElement);
+    var dragControls = new DragControls( baseObjects, camera, renderer.domElement);
     
     // DRAGGING COLOR MANAGEMENT
     var startColor;
@@ -324,7 +328,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
     bases[0].setPosY(1.5);    // Start with a little springiness on load
 
     // CONTROLS - ORBITAL
-    var orbControls = new THREE.OrbitControls(camera, renderer.domElement);
+    var orbControls = new OrbitControls(camera, renderer.domElement);
     orbControls.target = centerBase;
     orbControls.update();
 

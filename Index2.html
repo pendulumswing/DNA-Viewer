@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<script src="js/webGL.js"></script>
+	<title>DNA Viewer</title>
+</head>
+<body>
+	<div class="animDiv">
+		<div class="gui" id="gui1"></div>
+		<!-- <button class="button" id="reset">Reset</button> -->
+		<!-- <button class="button" id="pause">Pause</button> -->
+		<canvas class="c" id="c1"></canvas>
+	</div>
+
+	<div class="animDiv">
+		<div class="gui" id="gui2"></div>
+		<!-- <button class="button" id="reset">Reset</button> -->
+		<!-- <button class="button" id="pause">Pause</button> -->
+		<canvas class="c" id="c2"></canvas>
+	</div>
+
+	<script src="build/three.min.js"></script>					<!-- three -->
+	<script src="js/controls/OrbitControls.js"></script>		<!-- Orbit Controls -->
+	<script src="js/controls/DragControls.js"></script>			<!-- Drag Controls -->
+	<script src="js/libs/dat.gui.min.js"></script>				<!-- GUI -->
+	<script type="module" src="js/utils.js"></script>			<!-- Utilities-->
+	<script type="module" src="js/utils/degToRad.js"></script>			<!-- Utilities-->
+	<script type="module" src="js/utils/resizeRendererToDisplaySize.js"></script>			<!-- Utilities-->
+	<script type="module" src="js/constants/BASE_DISTANCE_START.js"></script>	
+	<script type="module" src="js/constants/Constants.js"></script>
+	<script type="module" src="js/classes/DNAObject.js"></script>	<!-- Base-->
+	<script type="module" src="js/classes/Base.js"></script>	<!-- Base-->
+	<script type="module" src="js/classes/Spring.js"></script>	<!-- Spring-->
+	<script type="module" src="js/classes/Canvas.js"></script>	<!-- Canvas-->
+	<script type="module" src="js/dnaObject.js"></script>		<!-- DNA -->
+	<script type="module" src="js/main.js"></script>			<!-- Main -->
+	<!-- <script type="module" src="js/script.js"></script> -->
+
+	<!-- <script type="module" src="src/main.js"></script> -->
+</body>
+</html>

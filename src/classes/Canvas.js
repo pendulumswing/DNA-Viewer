@@ -6,6 +6,9 @@ export default class Canvas {
 
         this.aspect = aspect;
         this.canvas = document.querySelector(canvasSelector);
+        if(this.canvas === null) {
+            alert("Canvas is null");
+        }
         // console.log("Aspect of Canvas Object: " + this.canvas.aspect);
         this.parent = this.canvas.parentElement;
         this.style = getComputedStyle(this.parent); 
