@@ -1,102 +1,43 @@
 <!DOCTYPE html>
 <html>
-	<head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Three JS</title>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<script src="src/webGL.js"></script>
+	<title>DNA Viewer</title>
+</head>
+<body>
+	<div class="animDiv">
+		<div class="gui" id="gui1"></div>
+		<!-- <button class="button" id="reset">Reset</button> -->
+		<!-- <button class="button" id="pause">Pause</button> -->
+		<canvas class="c" id="c1"></canvas>
+	</div>
 
-		<!--
-		  Favicons!
+	<div class="animDiv">
+		<div class="gui" id="gui2"></div>
+		<!-- <button class="button" id="reset">Reset</button> -->
+		<!-- <button class="button" id="pause">Pause</button> -->
+		<canvas class="c" id="c2"></canvas>
+	</div>
 
-		  Webpack will automatically convert the high-resolution image saved to "assets/images/favicon.png"
-		  into a series of favicons for various devices like the browser, android, apple, windows, etc.
+	<script src="src/build/three.min.js"></script>					<!-- three -->
+	<script src="src/controls/OrbitControls.js"></script>		<!-- Orbit Controls -->
+	<script src="src/controls/DragControls.js"></script>			<!-- Drag Controls -->
+	<script src="src/libs/dat.gui.min.js"></script>				<!-- GUI -->
+	<script type="module" src="src/utils.js"></script>			<!-- Utilities-->
+	<script type="module" src="src/utils/degToRad.js"></script>			<!-- Utilities-->
+	<script type="module" src="src/utils/resizeRendererToDisplaySize.js"></script>			<!-- Utilities-->
+	<script type="module" src="src/constants/BASE_DISTANCE_START.js"></script>	
+	<script type="module" src="src/constants/Constants.js"></script>
+	<script type="module" src="src/classes/DNAObject.js"></script>	<!-- Base-->
+	<script type="module" src="src/classes/Base.js"></script>	<!-- Base-->
+	<script type="module" src="src/classes/Spring.js"></script>	<!-- Spring-->
+	<script type="module" src="src/classes/Canvas.js"></script>	<!-- Canvas-->
+	<script type="module" src="src/dnaObject.js"></script>		<!-- DNA -->
+	<script type="module" src="src/main.js"></script>			<!-- Main -->
+	<!-- <script type="module" src="js/script.js"></script> -->
 
-		  By default, only the favicons for the browser are generated, but you can change that by modifying
-		  the settings for the FaviconsWebpackPlugin in the webpack config. The generated favicons all contain
-		  a unique hash in the URL to facilitate cache busting, and will look like this:
-
-		  <link rel="icon" type="image/png" sizes="32x32" href="/favicons-[hash]/favicon-32x32.png">
-		  <link rel="icon" type="image/png" sizes="16x16" href="/favicons-[hash]/favicon-16x16.png">
-		  <link rel="shortcut icon" href="/favicons-[hash]/favicon.ico">
-
-		  If you'd like to take full control over favicon generation process, or learn more about why
-		  favicon generation can be challenging, the Real Favicon Generator website is a great resource:
-
-		  http://realfavicongenerator.net/faq
-		-->
-
-		<!--
-          Styles!
-
-          Webpack will place your styles below this comment.
-
-          In development, they will be included inline, like this:
-
-          <style>
-            ... your styles ...
-          </style>
-
-          In production, the ExtractTextPlugin in the webpack config will extract
-          all styles and place them in a file called styles.main.css, which will be
-          included like this:
-
-          <link href="/styles.main.css" rel="stylesheet">
-
-          To facilitate cache busting, this file will also contain a unique hash, to
-          prevent browsers from using old styles once they've been updated. The final
-          production file will look something like this:
-
-          <link href="/styles.main.bb904647341499c464e6.css" rel="stylesheet">
-        -->
-	</head>
-	<body>
-
-      <div class="animDiv">
-          <div class="gui" id="gui1"></div>
-          <!-- <button class="button" id="reset">Reset</button> -->
-          <!-- <button class="button" id="pause">Pause</button> -->
-          <canvas class="c" id="c1"></canvas>
-        </div>
-      
-        <div class="animDiv">
-          <div class="gui" id="gui2"></div>
-          <!-- <button class="button" id="reset">Reset</button> -->
-          <!-- <button class="button" id="pause">Pause</button> -->
-          <canvas class="c" id="c2"></canvas>
-        </div>
-
-
-		<!-- <canvas id="canvas"></canvas>
-        <div id="error"></div> -->
-
-        <!--
-          Webpack will place your JavaScript bundles below this comment.
-
-          The number of bundles your project has can have a large impact on your first
-          page load time, since it takes longer to load one single large bundle (with
-          all your code inside) compared to loading multiple smaller bundles that can
-          be fetched in parallel.
-
-          New Lore projects include two bundles by default. The first is called 'main'
-          and includes the Lore core and your custom project files. The second is called
-          'vendor' and includes vendor libraries like React, React DOM, and React Router.
-
-          To further optimize the first page load time of your application, you are encouraged
-          to add more libraries to the vendor bundle, or to create new bundles as needed.
-
-          In development, the bundles will be included like this:
-
-          <script type="text/javascript" src="/bundle.vendor.js"></script>
-          <script type="text/javascript" src="/bundle.main.js"></script>
-
-          In production, in order to facilitate cache busting, these files will also contain a
-          unique hash, to prevent browsers from using old files once they've been updated. The
-          final production files will look something like this:
-
-          <script type="text/javascript" src="/bundle.vendor.bbf77f84f00fd43296cb.js"></script>
-          <script type="text/javascript" src="/bundle.main.bb904647341499c464e6.js"></script>
-        -->
-
-
-	</body>
+	<!-- <script type="module" src="src/main.js"></script> -->
+</body>
 </html>
