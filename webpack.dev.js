@@ -20,34 +20,45 @@ module.exports = merge(common, {
       template: "./src/index.html"                      // <-- Template HTML
     })
   ],
+  
   module: {
     rules: [
       {
-        test: /\.scss$/,
+        test: /\.scss$/,                                // LOADER - SCSS
         use: [
-          "style-loader",           // 3. Inject styles into DOM
+          "style-loader",                               // 3. Inject styles into DOM
           {
-            loader: 'css-loader',   // 2. Turns css into commonjs
+            loader: 'css-loader',                       // 2. Turns css into commonjs
             options: {
               importLoaders: 1
             }
           },
-          'postcss-loader',         // 1. Adds API for post css tools, like autoprefixer
-          "sass-loader"             // 0. Turns sass into css
+          'postcss-loader',                             // 1. Adds API for post css tools, like autoprefixer
+          "sass-loader"                                 // 0. Turns scss into css
         ]
       },
       {
-        test: /\.css$/,
+        test: /\.css$/,                                 // LOADER - CSS
         use: [
-            "style-loader",           // 3. Inject styles into DOM
+            "style-loader",                             // 3. Inject styles into DOM
             {
-              loader: 'css-loader',   // 2. Turns css into commonjs
+              loader: 'css-loader',                     // 2. Turns css into commonjs
               options: {
                 importLoaders: 1
               }
             },
-            'postcss-loader',         // 1. Adds API for post css tools, like autoprefixer
+            'postcss-loader',                           // 1. Adds API for post css tools, like autoprefixer
         ]
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|tif|tiff|bmp|svg)$/, // LOADER - Image
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "[name].[hash].[ext]",
+            outputPath: "imgs"
+          }
+        }
       }
     ]
   }
