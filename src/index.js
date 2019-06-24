@@ -3,13 +3,13 @@
  * They will be dynamically injected into the index.html file
  */
 
-import '../assets/css/style.css';
+import './assets/css/style.css';
 
 /*
  * Do the WebGL check if desired
  */
 
-import WebGL from './utils/webGL';
+import WebGL from './app/utils/webGL';
 
 // if (!WebGL.isWebGLAvailable()) {
 //     const node = document.getElementById("canvas");
@@ -20,4 +20,4 @@ import WebGL from './utils/webGL';
  * Render the application!
  */
 
-import './main';
+import './app/main';

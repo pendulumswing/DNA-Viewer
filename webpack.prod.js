@@ -9,7 +9,7 @@ const merge = require("webpack-merge");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");      // Require when necessary to explicitly minify JS outside default 'minimizer' behavior
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
@@ -21,9 +21,9 @@ module.exports = merge(common, {
   optimization: {
     minimizer: [                                            // 
       new OptimizeCssAssetsPlugin(),                        // CSS Optimize
-      new TerserPlugin(),                                   // Must specify since default settings are overidden with OptimizeCssAssetsPlugin         
-      new HtmlWebpackPlugin({                               // Must specify since default settings are overidden with OptimizeCssAssetsPlugin 
-        template: "index.html",                      // <-- Template HTML
+      new TerserPlugin(),                                   // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin         
+      new HtmlWebpackPlugin({                               // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin 
+        template: "./src/index.html",                      // <-- Template HTML
         minify: {
           removeAttributeQuotes: true,
           collapseWhitespace: true,

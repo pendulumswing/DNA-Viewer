@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "threejs_experiment",
+  "name": "DNA_Viewer",
   "alias": [],
   "builds": [
     { "src": "./dist/**", "use": "@now/static" }
