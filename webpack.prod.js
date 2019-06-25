@@ -15,12 +15,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');           // Copies in
 const WebappWebpackPlugin = require('webapp-webpack-plugin');       // automatically generate webapp manifest files along with 44 different icon formats as appropriate for iOS devices, Android devices, Windows Phone and various desktop browsers out of your single logo.png
 const ManifestPlugin = require('webpack-manifest-plugin');          // For generating asset manifests 
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');   // Progress bar during build
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');  // Extension for html-webpack-plugin to programmatically insert or update <base href="" /> tag.
 
 
-module.exports = merge(common, {
+module.exports = merge(common, {                            // Will merge this config to the 'common' config
   mode: "production",
-  output: {                                                 // OUTPUT
-    filename: "[name].[contentHash].bundle.js",
+  output: {                                                 // JS OUTPUT FILENAME
+    filename: "bundle.[name].[contentHash].js",
     path: path.resolve(__dirname, "dist")
   },
   optimization: {
@@ -29,46 +30,56 @@ module.exports = merge(common, {
       new TerserPlugin(),                                   // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin         
       new HtmlWebpackPlugin({                               // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin 
         template: "./src/index.html",                       // <-- Template HTML
+        // inject: 'body',
         minify: {
           removeAttributeQuotes: true,
           collapseWhitespace: true,
           removeComments: true
         }
+      }),
+      new BaseHrefWebpackPlugin({ 
+        baseHref: '/' 
       })
-    ]
+    ],
+    splitChunks: {
+      chunks: 'all'
+    }
   },
 
   plugins: [
-    new MiniCssExtractPlugin({ filename: "[name].[contentHash].css" }),
     new ManifestPlugin({
-        fileName: 'asset-manifest.json'
+      fileName: 'asset-manifest.json'
     }),
     new ProgressBarPlugin(),
+    new MiniCssExtractPlugin({ 
+      filename: "styles.[name].[contentHash].css",          // CSS OUTPUT FILENAME
+      chunkFilename: 'styles.[id].css',
+    }),
     new CleanWebpackPlugin(),
-    (new CopyWebpackPlugin([{                               // Copies individual files or entire directories to the build directory.
-        from: './src/assets/images',
-        to: './assets/images'
-      }])),
-    new WebappWebpackPlugin({
-        logo: './src/assets/images/favicon.png',
-        cache: true,
-        prefix: 'favicons-[hash]/',
-        // emitStats: true,
-        // statsFilename: 'favicon-manifest.json',
-        inject: true,
-        favicons: {
-          icons: {
-            android: false,
-            appleIcon: false,
-            appleStartup: false,
-            coast: false,
-            favicons: true,
-            firefox: false,
-            windows: false,
-            yandex: false
-          }
+    new CopyWebpackPlugin([{                                // Copies individual files or entire directories to the build directory.
+      from: './src/assets/images',
+      to: './assets/images'
+    }]),
+    new WebappWebpackPlugin({                               // Favicon
+      logo: './src/assets/images/favicon.png',
+      cache: true,
+      prefix: 'favicons-[hash]/',
+      // emitStats: true,
+      // statsFilename: 'favicon-manifest.json',
+      inject: true,
+      favicons: {
+        icons: {
+          android: false,
+          appleIcon: false,
+          appleStartup: false,
+          coast: false,
+          favicons: true,
+          firefox: false,
+          windows: false,
+          yandex: false
         }
-      })
+      }
+    })
   ],
   
   module: {
@@ -76,32 +87,32 @@ module.exports = merge(common, {
       {
         test: /\.scss$/,                                          // LOADER - SCSS
         use: [
-          MiniCssExtractPlugin.loader,                            // 3. Extract css into files
+          MiniCssExtractPlugin.loader,                                // 3. Extract css into files
           {
-            loader: 'css-loader',                                 // 2. Turns css into commonjs
+            loader: 'css-loader',                                     // 2. Turns css into commonjs
             options: {
               importLoaders: 1
             }
           },
-          'postcss-loader',                                       // 1. Adds API for post css tools, like autoprefixer
-          "sass-loader"                                           // 0. Turns scss into css
+          'postcss-loader',                                           // 1. Adds API for post css tools, like autoprefixer
+          "sass-loader"                                               // 0. Turns scss into css
         ]
       },
       {
         test: /\.css$/,                                           // LOADER - CSS
         use: [
-          MiniCssExtractPlugin.loader,                            // 3. Extract css into files
+          MiniCssExtractPlugin.loader,                                // 3. Extract css into files
           {
-            loader: 'css-loader',                                 // 2. Turns css into commonjs
+            loader: 'css-loader',                                     // 2. Turns css into commonjs
             options: {
-              importLoaders: 1
+              importLoaders: 1,
             }
           },
-          'postcss-loader',                                       // 1. Adds API for post css tools, like autoprefixer
+          'postcss-loader',                                           // 1. Adds API for post css tools, like autoprefixer
         ]
       },
       {
-        test: /\.(png|jpg|jpeg|gif|tif|tiff|bmp|svg)$/,           // LOADER = Images
+        test: /\.(png|jpg|jpeg|gif|tif|tiff|bmp|svg)$/,           // LOADER - Images
         use: {
           loader: "url-loader",
           options: {
@@ -122,7 +133,7 @@ module.exports = merge(common, {
             )
           }
         }
-      }
+      }      
     ]
   }
 });
