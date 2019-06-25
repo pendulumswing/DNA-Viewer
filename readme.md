@@ -25,6 +25,7 @@ Builds a production version and places the compiled assets in a `dist` directory
 
     npm install http-server -g
 Start the server with:
+
     http-server
 #### Deploy to Now
     npm run deploy:production
