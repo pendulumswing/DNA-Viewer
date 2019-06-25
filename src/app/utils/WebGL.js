@@ -92,3 +92,5 @@ var WEBGL = {
 	}
 
 };
+
+export default WEBGL;
