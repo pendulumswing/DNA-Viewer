@@ -373,6 +373,8 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
         renderer.render(scene, camera);         // Render
     }
     requestAnimationFrame(render);   
+
+    return this;
 }
 
 

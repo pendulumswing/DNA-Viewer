@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 
 // DNAOBJECT - BASE CLASS
-export default class DNAObject {       
+export default class PrimitiveObject {       
     constructor(scene) {
 
         // Lists

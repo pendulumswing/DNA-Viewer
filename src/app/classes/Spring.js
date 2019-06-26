@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import DNAObject from './DNAObject.js';
+import PrimitiveObject from './PrimitiveObject.js';
 import degToRad from '../utils/degToRad.js';
 // import BASE_DISTANCE_START from '../constants/BASE_DISTANCE_START';
 import Constants from '../constants/Constants.js';
 
 // SPRING
-export default class Spring extends DNAObject {
+export default class Spring extends PrimitiveObject {
     constructor(scene, top, bot) {
 
         super(scene);

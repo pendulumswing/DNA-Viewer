@@ -25,11 +25,33 @@ body, html {
     background-repeat: no-repeat;
     background-position: 50%;
 }
+
 .gutter.gutter-horizontal {
     cursor: ew-resize;
 }
 
+#animGroup {
+    position: relative;
+    max-width: 1200px;
+}
+
+.animRow {
+    display: flex;
+    position: relative;
+}
+
 .animDiv {
+    
+    flex: 50%;
+    margin: 30px;       /* Use margin instead of padding for raycasting to work */
+    position: relative;
+    max-width: 1000px;
+    max-height: 1000px;
+}
+
+.guiDiv {
+    
+    flex: 30%;
     margin: 30px;       /* Use margin instead of padding for raycasting to work */
     position: relative;
     max-width: 1000px;
