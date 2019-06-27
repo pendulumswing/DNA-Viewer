@@ -16,7 +16,7 @@
     "url": "https://github.com/pendulumswing/DNA-Viewer/issues"
   },
   "scripts": {
-    "build": "npm run build:production",
+    "build": "npm run build:production && npm run server:node",
     "build:development": "webpack --config webpack.dev.js",
     "build:production": "npm run clean && webpack --config webpack.prod.js",
     "deploy": "now",
@@ -24,10 +24,12 @@
     "clean": "rimraf dist",
     "start": "webpack-dev-server --config webpack.dev.js  --open",
     "server": "json-server --watch db.json --port=1337",
+    "server:newTerminal": "open -a Terminal dist/",
+    "server:node": "cd dist && http-server -o",
     "stats": "npm run stats:development",
     "stats:development": "webpack --json --env=development > stats.json",
     "stats:production": "webpack --json --env=production -p > stats.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"    
   },
   "dependencies": {
     "clean-webpack-plugin": "^2.0.0",
