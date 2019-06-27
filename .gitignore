@@ -1,5 +1,15 @@
 node_modules
-<<<<<<< HEAD
-=======
-dist
->>>>>>> webpackJB
+dist 
+bower_components
+lib-cov
+*.seed
+*.log
+*.out
+*.pid
+npm-debug.log
+*~
+*#
+.DS_STORE
+.idea
+.node_history
+*.code-workspace
