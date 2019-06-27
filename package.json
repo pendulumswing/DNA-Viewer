@@ -29,7 +29,7 @@
     "stats": "npm run stats:development",
     "stats:development": "webpack --json --env=development > stats.json",
     "stats:production": "webpack --json --env=production -p > stats.json",
-    "test": "echo \"Error: no test specified\" && exit 1"    
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "clean-webpack-plugin": "^2.0.0",
@@ -41,9 +41,6 @@
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-proposal-decorators": "^7.4.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.6.0",
