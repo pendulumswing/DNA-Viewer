@@ -69,21 +69,21 @@ https://dnaviewer.pendulum.now.sh/
     ┣━ + dist                   <-- Not part of Repo
     ┗━ + node-modules           <-- Not part of Repo
 
-#### project root
+### project root
 Node package, Webpack, and Now config files are in the project root. These will dictate how the project is assembled using various commands in the format of:
 
     npm <commandName>
 
-#### /src
+### /src
 All development source code and assets are contained in the **`src`** directory. The root of this directory contains the entry point for all development scripts (**`index.js`**), as well as the template for the HTML entry point (**`index.html`**). The **`vendor.js`** file is an entry point for scripts that are changed less frequently during development. These are often dependencies like, for example, bootstrap.js. By separating the scripts into two groups (one that is changed often and one that is rarely changed), load resources can be split and will not require `vendor.js` to be fetched if no changes are made.
 
-#### /app
+### /app
 The app directory contains the source code for the application.
 
-#### /assets
+### /assets
 The assets directory contains assets for the application, which may include images, favicons, css, video, etc.
 
-#### /dist
+### /dist
 The `dist` directory is created whenever the project is built for production:
 
     npm run build:production
@@ -96,7 +96,7 @@ The build will require a web server at: **`localhost:8080`** to function properl
 
     http-server -o
 
-#### /node-modules
+### /node-modules
 This directory contains all the dependencies for the project, installed by the node package manager with:
 
     npm install
