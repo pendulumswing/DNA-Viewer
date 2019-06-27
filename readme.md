@@ -104,22 +104,23 @@ This directory contains all the dependencies for the project, installed by the n
 
 This project uses Webpack to consolidate scripts, css, and other dependecies into optimized versions for production or development. The webpack config files in the project root control the behavior of this process. During development, webpack will start a server and open a page to the project. It will then update the browser in real time as changes are saved to the source code. It will also aid in cache-busting by using a unique content hash for each file it generates. During production webpack will pack all dependencies of a type (for example Javascript) into a single file and minify it. It will create a **`dist`** directory with all the necessary assets built to production specifications. It can even deploy the production build to a remote server; in its current state it will deploy to **Now** (https://zeit.co/now)
 
-#### config files
+### config files
 There are essentially two webpack configs:
 
 **`webpack.dev.js`** - for development 
+ 
 **`webpack.prod.js`** - for production
 
 Both of these files share some common code which can be found in a third config file:
 
 **`webpack.common.js`**
 
-#### commands
+### commands
 Webpack functionality is initiated through the **`package.json`** file, also in the project root. This file contains the various commands to call the webpack config scripts from the terminal, along with other support functionality (such as starting the dev server). To see which commands are available, or to add or edit new commands, review this file's `"scripts":` object. Commands are initiated in this format:
 
     npm <commandName>
 
-#### config layout
+### config layout
 
 
 
