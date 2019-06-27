@@ -19,15 +19,17 @@ Starts a devlopment server and opens the browser with a copy of the project. Upd
 
 ### Production Build
     npm run build
-Builds a production version and places the compiled assets in a `dist` directory at the root of the project. CSS, JS, and HTML are minified. Build version can be tested by running a server with the `dist` directory. To do this, first install the server:
+Builds a production version and places the compiled assets in a **`dist`** directory at the root of the project. CSS, JS, and HTML are minified. Build version can be tested by running a server with the **`dist`** directory. To do this, first install the server:
 
     npm install http-server -g
+
 Start the server with:
 
     http-server
+
 ### Deploy to Now
     npm run deploy:production
-Builds a production version and places the compiled assets in a `dist` directory at the root of the project. The project will then be deployed to Now(now.sh). 
+Builds a production version and places the compiled assets in a **`dist`** directory at the root of the project. The project will then be deployed to Now(now.sh). 
 
 If you try to run it, it will likely ask you to log in or create an
 account. This can be done at:
@@ -72,16 +74,16 @@ Node package, Webpack, and Now config files are in the project root. These will 
 
     npm <commandName>
 
-#### src
-All development source code and assets are contained in the `src` directory. The root of this directory contains the entry point for all development scripts (`index.js`), as well as the template for the HTML entry point (`index.html`). The `vendor.js` file is an entry point for scripts that are changed less frequently during development. These are often depenencies like, for example, bootstrap.js. By separating the scripts into two groups (one that is changed often and one that is rarely changed), load resources can be split and will not require `vendor.js` to be fetched if no changes are made.
+#### /src
+All development source code and assets are contained in the **`src`** directory. The root of this directory contains the entry point for all development scripts (**`index.js`**), as well as the template for the HTML entry point (**`index.html`**). The **`vendor.js`** file is an entry point for scripts that are changed less frequently during development. These are often dependencies like, for example, bootstrap.js. By separating the scripts into two groups (one that is changed often and one that is rarely changed), load resources can be split and will not require `vendor.js` to be fetched if no changes are made.
 
-#### app
+#### /app
 The app directory contains the source code for the application.
 
-#### assets
+#### /assets
 The assets directory contains assets for the application, which may include images, favicons, css, video, etc.
 
-#### dist
+#### /dist
 The `dist` directory is created whenever the project is built for production:
 
     npm run build:production
@@ -90,11 +92,11 @@ or simply:
 
     npm run build
 
-The build will require a web server at: `localhost:8080` to function properly. If the node http-server has been installed (see above) simply switch to the `dist` directory and type:
+The build will require a web server at: **`localhost:8080`** to function properly. If the node http-server has been installed (see above) simply switch to the **`dist`** directory and type:
 
     http-server -o
 
-#### node-modules
+#### /node-modules
 This directory contains all the dependencies for the project, installed by the node package manager with:
 
     npm install
@@ -107,21 +109,21 @@ This project uses Webpack to consolidate scripts, css, and other dependecies int
 ### config files
 There are essentially two webpack configs:
 
-**`webpack.dev.js`** - for development 
- 
+**`webpack.dev.js`** - for development   
 **`webpack.prod.js`** - for production
 
-Both of these files share some common code which can be found in a third config file:
+Both of these files share common code from a third config file:
 
 **`webpack.common.js`**
 
 ### commands
-Webpack functionality is initiated through the **`package.json`** file, also in the project root. This file contains the various commands to call the webpack config scripts from the terminal, along with other support functionality (such as starting the dev server). To see which commands are available, or to add or edit new commands, review this file's `"scripts":` object. Commands are initiated in this format:
+Webpack functionality is initiated through the **`package.json`** file, also in the project root. This file contains the various commands to call the webpack config scripts from the terminal, along with other support functionality (such as starting the dev server). To see which commands are available, or to add or edit new commands, review this file's **`"scripts":`** object. Commands are initiated in this format:
 
     npm <commandName>
 
 ### config layout
 
+-TODO
 
 
 
