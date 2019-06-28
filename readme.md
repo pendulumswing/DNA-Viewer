@@ -129,9 +129,39 @@ Webpack functionality is called through node package manager (npm) and is config
 
 ### config layout
 
--TODO
+Webpack config files are written in Javascript with dependencies at the top in the following format:
 
+    const path = require("path");
 
+The body of the code is contained in a **`module.exports`** object:
+
+    module.exports = {
+        ...
+    }
+
+Key parameter objects within **`module.exports`**:
+
+| Key           | Description                                                             |
+|---------------|-------------------------------------------------------------------------|
+| entry:        | The javascript file that will serve as the index to all other JS files. |
+| output:       | The target output filename and path, as well as other variables.        |
+| mode:         | i.e. production or development                                          |
+| optimization: | Settings for minimizing and optimizing file packing                     |
+| module:       | Contains the methods to load different file types (loaders)             |
+| plugin:       | Plugins used to extend functionality of webpack                         |
+
+### entry:       
+TODO
+### output:      
+TODO
+### mode:        
+TODO
+### optimization:
+TODO
+### module:      
+TODO
+### plugin:      
+TODO
 
 
 
