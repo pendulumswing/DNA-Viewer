@@ -12,7 +12,7 @@ import OrbitControls from 'three-orbitcontrols';
 import DragControls from 'three-dragcontrols';
 
 import Spring from './classes/Spring.js';
-import Base from './classes/Base.js';
+import BasePair from './classes/BasePair.js';
 import Canvas from './classes/Canvas.js';
 import Constants from './constants/Constants.js';
 import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
@@ -22,7 +22,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
 
     // Default Values
     const defaults = {
-        
+
     }
 
     // Combine Defaults with Options Parameter
@@ -115,7 +115,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
     function createBases(numBases) {
         for(var i = 0; i < numBases; i++) {
                     
-            bases[i] = new Base({scene: scene});                                     // Create new Bases
+            bases[i] = new BasePair({scene: scene});                                     // Create new Bases
                     
             if(i === 0) {                                                   // Set Positions
                 bases[i].setPosY(1);

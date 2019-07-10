@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import PrimitiveObject from './PrimitiveObject.js';
+import Constants from '../constants/Constants.js';
 import degToRad from '../utils/degToRad.js';
 // import BASE_DISTANCE_START from '../constants/BASE_DISTANCE_START';
-import Constants from '../constants/Constants.js';
 
-// BASE
-export default class Base extends PrimitiveObject {   
+// BASE PAIR
+export default class BasePair extends PrimitiveObject {   
     
     constructor(options={}) {
 
