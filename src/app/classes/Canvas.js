@@ -2,19 +2,28 @@
 
 // CANVAS
 export default class Canvas {
-    constructor(canvasSelector, aspect=2) {
+    constructor(canvasSelector, options={}) {
 
-        this.aspect = aspect;
+        // Default Values
+        this.defaults = {
+            aspect: 2,
+        }
+
+        // Combine Defaults with Options Parameter
+        options = Object.assign({}, this.defaults, options); 
+
+        this.aspect = options.aspect;
         this.canvas = document.querySelector(canvasSelector);
+
         if(this.canvas === null) {
             alert("Canvas is null");
         }
-        // console.log("Aspect of Canvas Object: " + this.canvas.aspect);
+
         this.parent = this.canvas.parentElement;
         this.style = getComputedStyle(this.parent); 
         this.num = parseFloat(this.style.width, 10);
 
-        this.setAspect(aspect);
+        this.setAspect(options.aspect);
     }
 
     setAspect(aspect) {

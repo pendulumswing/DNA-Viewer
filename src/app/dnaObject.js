@@ -18,9 +18,18 @@ import Constants from './constants/Constants.js';
 import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
 
 
-export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
+export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
 
-    const c = new Canvas(canvasID, aspect);        // Arguments: Canvas HTML Element, Aspect Ratio
+    // Default Values
+    const defaults = {
+        
+    }
+
+    // Combine Defaults with Options Parameter
+    options = Object.assign({}, defaults, options);   
+
+
+    const c = new Canvas(canvasID, {aspect: aspect});        // Arguments: Canvas HTML Element, Aspect Ratio
     const canvas = c.canvas;
 
     // const canvas = document.querySelector(canvasID);
@@ -106,7 +115,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
     function createBases(numBases) {
         for(var i = 0; i < numBases; i++) {
                     
-            bases[i] = new Base(scene);                                     // Create new Bases
+            bases[i] = new Base({scene: scene});                                     // Create new Bases
                     
             if(i === 0) {                                                   // Set Positions
                 bases[i].setPosY(1);
@@ -130,9 +139,9 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5) {
             
             // Create new Springs
             let springGroup = [];
-            springGroup[0] = new Spring(scene, bases[i].phosLeft_Obj, bases[i+1].phosLeft_Obj);
-            springGroup[1] = new Spring(scene, bases[i].base_Obj, bases[i+1].base_Obj);
-            springGroup[2] = new Spring(scene, bases[i].phosRight_Obj, bases[i+1].phosRight_Obj);
+            springGroup[0] = new Spring({scene: scene, top: bases[i].phosLeft_Obj, bottom: bases[i+1].phosLeft_Obj});
+            springGroup[1] = new Spring({scene: scene, top: bases[i].base_Obj, bottom: bases[i+1].base_Obj});
+            springGroup[2] = new Spring({scene: scene, top: bases[i].phosRight_Obj, bottom: bases[i+1].phosRight_Obj});
 
             // Push Springs to Spring list
             springGroup.forEach(node => {

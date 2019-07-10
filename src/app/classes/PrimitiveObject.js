@@ -2,13 +2,12 @@
 import * as THREE from 'three';
 
 // DNAOBJECT - BASE CLASS
-export default class PrimitiveObject {       
-    constructor(scene) {
+export default class PrimitiveObject {     
 
-        // Lists
+    constructor(options={}) {
+        
         this.components = [];
         this.axesHelpers = [];
-        this.scene = scene;
     }
 
     dispose() {                             // Dispose of assets not collected by GC

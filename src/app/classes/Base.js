@@ -5,23 +5,40 @@ import degToRad from '../utils/degToRad.js';
 import Constants from '../constants/Constants.js';
 
 // BASE
-export default class Base extends PrimitiveObject {       
-    constructor(scene) {
+export default class Base extends PrimitiveObject {   
+    
+    constructor(options={}) {
 
-        super(scene);        
+        super(options);        
+
+        if(Object.keys(options).length === 0) {
+            console.log("DNA Base object requires a scene object in Options parameter object.");
+        } 
+
+        // Default Values
+        this.defaults = {
+            baseRadius: 0.4,
+            phosphateRadius: 0.4,
+            widthSegments: 20,
+            heightSegments: 20,
+            bondHeight: Constants.BOND_DISTANCE_START,
+            bondRadius: 0.08,
+            bondRadSegments: 8,
+            bondHeightSegments: 1
+        }
+
+        // Combine Defaults with Options Parameter
+        options = Object.assign({}, this.defaults, options);               
 
         // Geometry Parameters
-        // this.baseDistanceAtStart = 1.1;
-        // this.bondDistanceStart = 2;
-        this.baseRadius = 0.4;
-        this.phosphateRadius = 0.4;
-        this.widthSegments = 20;
-        this.heightSegments = 20;
-        // this.bondHeight = this.bondDistanceStart;
-        this.bondHeight = Constants.BOND_DISTANCE_START;
-        this.bondRadius = 0.08;
-        this.bondRadSegments = 8;
-        this.bondHeightSegments = 1;
+        this.baseRadius = options.baseRadius;
+        this.phosphateRadius = options.phosphateRadius;           
+        this.widthSegments = options.widthSegments;           
+        this.heightSegments = options.heightSegments;           
+        this.bondHeight = options.bondHeight;           
+        this.bondRadius = options.bondRadius;           
+        this.bondRadSegments = options.bondRadSegments;           
+        this.bondHeightSegments = options.bondHeightSegments;           
 
         // Create Geometry
         this.base_Geo = new THREE.SphereGeometry(this.baseRadius, this.widthSegments, this.heightSegments);
@@ -57,10 +74,8 @@ export default class Base extends PrimitiveObject {
         this.phosRight_Obj = this.makeInstance(this.phos_Geo, this.phos_Color, this.phosRight_Pos);
 
         this.addComponents();
-        this.addObjectsToScene(scene);
+        this.addObjectsToScene(options.scene);
         this.rig();
-
-        // return {getYPos: this.basePair_Loc.y};
     }
 
     rig() {
