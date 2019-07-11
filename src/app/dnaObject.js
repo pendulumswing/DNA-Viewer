@@ -11,86 +11,14 @@ import * as dat from 'dat.gui';
 import OrbitControls from 'three-orbitcontrols';
 import DragControls from 'three-dragcontrols';
 
-import Spring from './classes/Spring.js';
-import BasePair from './classes/BasePair.js';
+// import Spring from './classes/Spring.js';
+// import BasePair from './classes/BasePair.js';
 import Canvas from './classes/Canvas.js';
+import DnaObject from './classes/DnaObject.js'
+import CameraPerspective from './classes/CameraPerspective.js';
 import Constants from './constants/Constants.js';
 import Light from './classes/Light.js';
 import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
-
-
-export default class dnaObject {
-
-    constructor(canvasID, guiID, options={}) {
-
-        // Default Values
-        const defaults = {
-            aspect: 2,
-            basesCount: 5,
-        }
-
-        // Combine Defaults with Options Parameter
-        options = Object.assign({}, defaults, options);   
-
-        // Parameters
-        this.scene = options.scene;
-        this.bases = [];
-        this.baseObjects = [];
-        this.baseCount = options.basesCount;
-        this.springs = [];
-        this.springGroupsCount = this.baseCount - 1;
-        
-        this.createBases(this.baseCount);     
-        this.createSprings(this.baseCount);
-    }
-
-    createBases(numBases) {
-        for(var i = 0; i < numBases; i++) {
-                    
-            this.bases[i] = new BasePair({scene: this.scene});                                     // Create new Bases
-                    
-            if(i === 0) {                                                   // Set Positions
-                this.bases[i].setPosY(1);
-            } else {
-                this.bases[i].moveToPosRelativeToBaseAbove(this.bases[i - 1]);
-            }
-            
-            this.bases[i].pushComponentsToList(this.baseObjects);                     // Push Components to baseObjects List
-        }
-    }
-
-    createSprings(numBases) {
-        for(var i = 0; i < this.baseCount - 1; i++) {
-            
-            // Create new Springs
-            this.springGroup = [];
-            this.springGroup[0] = new Spring({scene: this.scene, top: this.bases[i].phosLeft_Obj, bottom: this.bases[i+1].phosLeft_Obj});
-            this.springGroup[1] = new Spring({scene: this.scene, top: this.bases[i].base_Obj, bottom: this.bases[i+1].base_Obj});
-            this.springGroup[2] = new Spring({scene: this.scene, top: this.bases[i].phosRight_Obj, bottom: this.bases[i+1].phosRight_Obj});
-
-            // Push Springs to Spring list
-            this.springGroup.forEach(node => {
-                this.springs.push(node);
-            });
-        }
-    }
-
-    updateSprings() {
-        this.springs.forEach((node) => {             // Springs - Appearance
-            node.update();
-        })
-                                                // Springs - Physics
-        for(var i = 0; i < this.springGroupsCount; i++) {
-            if(i !== this.springGroupsCount - 1) {             
-                this.springs[i].springSimulate(this.bases[i], this.bases[i + 1]);
-            } else {
-                this.springs[i].springSimulate(this.bases[i], this.bases[i + 1], true);
-            }
-        }
-    }
-}
-
-
 
 
 export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}) {
@@ -111,17 +39,14 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
 
     console.log("CANVAS: " + canvas.width + ", " + canvas.height);
 
-    // CAMERA
-    const fov = 30;
-    const near = 0.1;
-    const far = 500;
-    const camera = new THREE.PerspectiveCamera(fov, c.aspect, near, far);
-    const cameraPosXStart = 10;
-    const cameraPosYStart = 3;
-    const cameraPosZStart = 15;
-    camera.position.set(cameraPosXStart, cameraPosYStart, cameraPosZStart);
-    camera.lookAt(0,-1,0);
-    camera.up.set(0,1,0);  
+    
+    /**********************************************************************************
+     * 
+     *      CAMERA
+     * 
+     **********************************************************************************/
+    const camera = new CameraPerspective({fov: 30, near: 0.1, far: 500, aspect: c.aspect, position: [10, 3, 15], lookAt: [0,-1,0], up: [0,1,0]});
+    
 
     // GUI DOM
     const gui = new dat.GUI( { autoPlace: false } );        // SOURCE: https://jsfiddle.net/2pha/zka4qkt2/
@@ -138,10 +63,10 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
      * 
      **********************************************************************************/
 
+    // const lightDirectional = new Light(scene, {type: "directional", color: 0xFFFFFF, intensity: 0.8, position: [-1, 2, 4]});
     const lightDirectional = new Light(scene, {type: "directional", color: 0xFFFFFF, intensity: 0.8, position: [-1, 2, 4]});
     const lightAmbient = new Light(scene, {type: "ambient", color: 0xFFFFFF, intensity: 0.6, position: [-1, 2, 4]});
     const lightSpot = new Light(scene, {type: "spot", color: 0xAAFFFF, intensity: 0.4, position: [-1, -1, -5], penumbra: 0.5});
-
 
     /**********************************************************************************
      * 
@@ -149,7 +74,7 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
      * 
      **********************************************************************************/
 
-    const dna = new dnaObject(canvasID, guiID, {scene:scene,basesCount: basesCount});
+    const dna = new DnaObject(canvasID, guiID, {scene:scene,basesCount: basesCount});
 
      /**********************************************************************************
      * 
@@ -294,7 +219,7 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
      **********************************************************************************/
 
     // DRAGGING CONTROL
-    var dragControls = new DragControls(dna.baseObjects, camera, renderer.domElement);
+    var dragControls = new DragControls(dna.baseObjects, camera.camera, renderer.domElement);
     
     // DRAGGING COLOR MANAGEMENT
     var startColor;
@@ -316,36 +241,33 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
      **********************************************************************************/
     // Update Camera Focus to center of Chain
 
-    function cameraFocusFrame(baseList) {
+    // function cameraFocusFrame(baseList) {
 
-        const baseToLookAt = parseInt(baseList.length / 2);
-        const cameraZoomFactor = 2.5;
-        let basePosInCenterOfChain = new THREE.Vector3();
-        baseList[baseToLookAt].basePair_Loc.getWorldPosition(basePosInCenterOfChain);
-        camera.lookAt(basePosInCenterOfChain);
-        // console.log("ZOOM: " + camera.zoom);
-        camera.zoom = 1;
-        // console.log("ZOOM: " + camera.zoom);
-        camera.position.setX(cameraPosXStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
-        camera.position.setY(cameraPosYStart + cameraZoomFactor * baseToLookAt * 0.25); // + cameraZoomFactor * baseToLookAt;
-        camera.position.setZ(cameraPosZStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
+    //     const baseToLookAt = parseInt(baseList.length / 2);
+    //     const cameraZoomFactor = 2.5;
+    //     let basePosInCenterOfChain = new THREE.Vector3();
+    //     baseList[baseToLookAt].basePair_Loc.getWorldPosition(basePosInCenterOfChain);
+    //     camera.camera.lookAt(basePosInCenterOfChain);
+    //     camera.camera.zoom = 1;
+    //     camera.camera.position.setX(cameraPosXStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
+    //     camera.camera.position.setY(cameraPosYStart + cameraZoomFactor * baseToLookAt * 0.25); // + cameraZoomFactor * baseToLookAt;
+    //     camera.camera.position.setZ(cameraPosZStart + cameraZoomFactor * baseToLookAt); // + cameraZoomFactor * baseToLookAt;
 
-        return basePosInCenterOfChain;
-    }
+    //     return basePosInCenterOfChain;
+    // }
 
 
 
-    const centerBase = cameraFocusFrame(dna.bases);
+    // const centerBase = cameraFocusFrame(dna.bases);
     // const pickHelper = new PickHelper();
 
     dna.bases[0].setPosY(1.5);    // Start with a little springiness on load
 
     // CONTROLS - ORBITAL
-    var orbControls = new OrbitControls(camera, renderer.domElement);
-    orbControls.target = centerBase;
+    var orbControls = new OrbitControls(camera.camera, renderer.domElement);
+    // orbControls.target = centerBase;
+    orbControls.target = new THREE.Vector3(0,0,0);
     orbControls.update();
-
-
 
      /**********************************************************************************
      * 
@@ -354,7 +276,7 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
      **********************************************************************************/
     
     
-    renderer.render(scene, camera);
+    renderer.render(scene, camera.camera);
 
     // RENDER UPDATE LOOP
     function render(time) {
@@ -363,17 +285,17 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
 
         if (resizeRendererToDisplaySize(renderer)) {
             const rend = renderer.domElement;
-            camera.aspect = rend.clientWidth / rend.clientHeight;
-            camera.updateProjectionMatrix();
+            camera.camera.aspect = rend.clientWidth / rend.clientHeight;
+            camera.camera.updateProjectionMatrix();
           }
 
-        // cameraFocusFrame(bases);
+        // cameraFocusFrame(dna.bases);
 
         dna.updateSprings();
 
         orbControls.update();                   // Orbit Controls
         requestAnimationFrame(render);          // Animation frame
-        renderer.render(scene, camera);         // Render
+        renderer.render(scene, camera.camera);         // Render
     }
     requestAnimationFrame(render);   
 

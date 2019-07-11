@@ -44,8 +44,7 @@ export default class Light {
         this.light;
         this.helper;
 
-        this.createLight(this.color, this.intensity);
-        
+        this.createLight(this.color, this.intensity);        
     }
 
     createLight(color, intensity) {
@@ -82,7 +81,7 @@ export default class Light {
         } else if (this.type === "area") {
             this.helper = new THREE.RectAreaLightHelper(this.light, color);       
         } else if (this.type === "spot") {
-            this.helper = new THREE.SpotlightLightHelper(this.light);        
+            this.helper = new THREE.SpotLightHelper(this.light);        
         }
 
         this.scene.add(this.helper);
