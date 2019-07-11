@@ -15,7 +15,25 @@ import Spring from './classes/Spring.js';
 import BasePair from './classes/BasePair.js';
 import Canvas from './classes/Canvas.js';
 import Constants from './constants/Constants.js';
+import Light from './classes/Light.js';
 import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
+
+
+// export default class dnaObject {
+
+//     constructor(canvasID, guiID, options={}) {
+
+//         // Default Values
+//         const defaults = {
+//             basesCount: 5,
+//         }
+
+
+
+//     }
+// }
+
+
 
 
 export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
@@ -67,16 +85,18 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
      * 
      **********************************************************************************/
 
+    const light1 = new Light(scene, {scene: scene, type: "directional", color: 0xFFFFFF, intensity: 0.8, position: (-1, 2, 4)});
+    // scene.add(light1.light);
     // LIGHT - Directional
-    {
-        const color = 0xFFFFFF;
-        const intensity = .8;
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(-1, 2, 4);
-        scene.add(light);
-        // var helper = new THREE.DirectionalLightHelper(light, 1);
-        // scene.add(helper);
-    }
+    // {
+    //     const color = 0xFFFFFF;
+    //     const intensity = .8;
+    //     const light = new THREE.DirectionalLight(color, intensity);
+    //     light.position.set(-1, 2, 4);
+    //     scene.add(light);
+    //     // var helper = new THREE.DirectionalLightHelper(light, 1);
+    //     // scene.add(helper);
+    // }
 
     // LIGHT - Ambient
     {
