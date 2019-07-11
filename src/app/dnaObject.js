@@ -19,32 +19,85 @@ import Light from './classes/Light.js';
 import resizeRendererToDisplaySize from './utils/resizeRendererToDisplaySize.js';
 
 
-// export default class dnaObject {
+export default class dnaObject {
 
-//     constructor(canvasID, guiID, options={}) {
+    constructor(canvasID, guiID, options={}) {
 
-//         // Default Values
-//         const defaults = {
-//             basesCount: 5,
-//         }
+        // Default Values
+        const defaults = {
+            aspect: 2,
+            basesCount: 5,
+        }
 
+        // Combine Defaults with Options Parameter
+        options = Object.assign({}, defaults, options);   
 
-
-//     }
-// }
-
-
-
-
-export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
-
-    // Default Values
-    const defaults = {
-
+        // Parameters
+        this.scene = options.scene;
+        this.bases = [];
+        this.baseObjects = [];
+        this.baseCount = options.basesCount;
+        this.springs = [];
+        this.springGroupsCount = this.baseCount - 1;
+        
+        this.createBases(this.baseCount);     
+        this.createSprings(this.baseCount);
     }
 
+    createBases(numBases) {
+        for(var i = 0; i < numBases; i++) {
+                    
+            this.bases[i] = new BasePair({scene: this.scene});                                     // Create new Bases
+                    
+            if(i === 0) {                                                   // Set Positions
+                this.bases[i].setPosY(1);
+            } else {
+                this.bases[i].moveToPosRelativeToBaseAbove(this.bases[i - 1]);
+            }
+            
+            this.bases[i].pushComponentsToList(this.baseObjects);                     // Push Components to baseObjects List
+        }
+    }
+
+    createSprings(numBases) {
+        for(var i = 0; i < this.baseCount - 1; i++) {
+            
+            // Create new Springs
+            this.springGroup = [];
+            this.springGroup[0] = new Spring({scene: this.scene, top: this.bases[i].phosLeft_Obj, bottom: this.bases[i+1].phosLeft_Obj});
+            this.springGroup[1] = new Spring({scene: this.scene, top: this.bases[i].base_Obj, bottom: this.bases[i+1].base_Obj});
+            this.springGroup[2] = new Spring({scene: this.scene, top: this.bases[i].phosRight_Obj, bottom: this.bases[i+1].phosRight_Obj});
+
+            // Push Springs to Spring list
+            this.springGroup.forEach(node => {
+                this.springs.push(node);
+            });
+        }
+    }
+
+    updateSprings() {
+        this.springs.forEach((node) => {             // Springs - Appearance
+            node.update();
+        })
+                                                // Springs - Physics
+        for(var i = 0; i < this.springGroupsCount; i++) {
+            if(i !== this.springGroupsCount - 1) {             
+                this.springs[i].springSimulate(this.bases[i], this.bases[i + 1]);
+            } else {
+                this.springs[i].springSimulate(this.bases[i], this.bases[i + 1], true);
+            }
+        }
+    }
+}
+
+
+
+
+export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}) {
+
+
     // Combine Defaults with Options Parameter
-    options = Object.assign({}, defaults, options);   
+    // options = Object.assign({}, defaults, options);   
 
 
     const c = new Canvas(canvasID, {aspect: aspect});        // Arguments: Canvas HTML Element, Aspect Ratio
@@ -96,52 +149,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
      * 
      **********************************************************************************/
 
-    // BASES
-    const bases = [];
-    const baseObjects = [];
-    const baseCount = basesCount;
-    
-    function createBases(numBases) {
-        for(var i = 0; i < numBases; i++) {
-                    
-            bases[i] = new BasePair({scene: scene});                                     // Create new Bases
-                    
-            if(i === 0) {                                                   // Set Positions
-                bases[i].setPosY(1);
-            } else {
-                bases[i].moveToPosRelativeToBaseAbove(bases[i - 1]);
-            }
-            
-            bases[i].pushComponentsToList(baseObjects);                     // Push Components to baseObjects List
-        }
-    }
-
-    createBases(baseCount);
-    
-
-    // SPRINGS
-    const springs = [];
-    var springGroupsCount = baseCount - 1;
-
-    function createSprings(numBases) {
-        for(var i = 0; i < baseCount - 1; i++) {
-            
-            // Create new Springs
-            let springGroup = [];
-            springGroup[0] = new Spring({scene: scene, top: bases[i].phosLeft_Obj, bottom: bases[i+1].phosLeft_Obj});
-            springGroup[1] = new Spring({scene: scene, top: bases[i].base_Obj, bottom: bases[i+1].base_Obj});
-            springGroup[2] = new Spring({scene: scene, top: bases[i].phosRight_Obj, bottom: bases[i+1].phosRight_Obj});
-
-            // Push Springs to Spring list
-            springGroup.forEach(node => {
-                springs.push(node);
-            });
-        }
-    }
-
-    createSprings(baseCount);
-
-
+    const dna = new dnaObject(canvasID, guiID, {scene:scene,basesCount: basesCount});
 
      /**********************************************************************************
      * 
@@ -286,7 +294,7 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
      **********************************************************************************/
 
     // DRAGGING CONTROL
-    var dragControls = new DragControls( baseObjects, camera, renderer.domElement);
+    var dragControls = new DragControls(dna.baseObjects, camera, renderer.domElement);
     
     // DRAGGING COLOR MANAGEMENT
     var startColor;
@@ -301,6 +309,11 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
     }
 
 
+     /**********************************************************************************
+     * 
+     *      CAMERA FRAME
+     * 
+     **********************************************************************************/
     // Update Camera Focus to center of Chain
 
     function cameraFocusFrame(baseList) {
@@ -320,10 +333,12 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
         return basePosInCenterOfChain;
     }
 
-    const centerBase = cameraFocusFrame(bases);
+
+
+    const centerBase = cameraFocusFrame(dna.bases);
     // const pickHelper = new PickHelper();
 
-    bases[0].setPosY(1.5);    // Start with a little springiness on load
+    dna.bases[0].setPosY(1.5);    // Start with a little springiness on load
 
     // CONTROLS - ORBITAL
     var orbControls = new OrbitControls(camera, renderer.domElement);
@@ -353,18 +368,8 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
           }
 
         // cameraFocusFrame(bases);
-        
-        springs.forEach((node) => {             // Springs - Appearance
-            node.update();
-        })
-                                                // Springs - Physics
-        for(var i = 0; i < springGroupsCount; i++) {
-            if(i !== springGroupsCount - 1) {             
-                springs[i].springSimulate(bases[i], bases[i + 1]);
-            } else {
-                springs[i].springSimulate(bases[i], bases[i + 1], true);
-            }
-        }
+
+        dna.updateSprings();
 
         orbControls.update();                   // Orbit Controls
         requestAnimationFrame(render);          // Animation frame
