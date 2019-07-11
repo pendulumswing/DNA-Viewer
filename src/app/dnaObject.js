@@ -85,40 +85,9 @@ export function dnaObject(canvasID, guiID, aspect, basesCount=5, options={}) {
      * 
      **********************************************************************************/
 
-    const light1 = new Light(scene, {scene: scene, type: "directional", color: 0xFFFFFF, intensity: 0.8, position: (-1, 2, 4)});
-    // scene.add(light1.light);
-    // LIGHT - Directional
-    // {
-    //     const color = 0xFFFFFF;
-    //     const intensity = .8;
-    //     const light = new THREE.DirectionalLight(color, intensity);
-    //     light.position.set(-1, 2, 4);
-    //     scene.add(light);
-    //     // var helper = new THREE.DirectionalLightHelper(light, 1);
-    //     // scene.add(helper);
-    // }
-
-    // LIGHT - Ambient
-    {
-        const color = 0xFFFFFF;
-        const intensity = 0.6;
-        const light = new THREE.AmbientLight(color, intensity);
-        light.position.set(-1, 2, 4);
-        scene.add(light);
-    }
-
-    // LIGHT - Spotlight  (backlight)
-    {
-        const color = 0xAAFFFF;
-        const intensity = 0.4;
-        const light = new THREE.SpotLight(color, intensity);
-        light.position.set(-1, -1, -5);
-        light.penumbra = 0.5;
-        light.lookAt(new THREE.Vector3(0,0,0));
-        scene.add(light);
-        // var helper = new THREE.SpotLightHelper(light);
-        // scene.add(helper);
-    }
+    const lightDirectional = new Light(scene, {type: "directional", color: 0xFFFFFF, intensity: 0.8, position: [-1, 2, 4]});
+    const lightAmbient = new Light(scene, {type: "ambient", color: 0xFFFFFF, intensity: 0.6, position: [-1, 2, 4]});
+    const lightSpot = new Light(scene, {type: "spot", color: 0xAAFFFF, intensity: 0.4, position: [-1, -1, -5], penumbra: 0.5});
 
 
     /**********************************************************************************
