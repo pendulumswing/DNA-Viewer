@@ -2,7 +2,7 @@
 
 'use strict';
 
-import {dnaObjectScene} from './dnaObject.js';
+import {dnaObjectScene} from './dnaObjectScene.js';
 // import {Canvas} from './dnaObjectClasses';
 // import {Canvas} from './primitiveObject.js';
 
