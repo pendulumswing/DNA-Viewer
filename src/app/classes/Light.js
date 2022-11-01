@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-
+import { RectAreaLightHelper }  from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 
 // DNAOBJECT - BASE CLASS
-export default class Light {     
+export default class Light {
 
     constructor(scene, options={}) {
 
@@ -24,8 +24,8 @@ export default class Light {
         }
 
         // Combine Defaults with Options Parameter
-        options = Object.assign({}, this.defaults, options);   
-        
+        options = Object.assign({}, this.defaults, options);
+
         // Parameters
         this.scene = scene;
         this.type = options.type;
@@ -33,7 +33,7 @@ export default class Light {
         this.intensity = options.intensity;
         this.position = options.position;
         this.lookAt = options.lookAt;
-        this.penumbra = options.penumbra;        
+        this.penumbra = options.penumbra;
         this.skyColor = options.skyColor;
         this.groundColor = options.groundColor;
         this.distance = options.distance;
@@ -44,27 +44,27 @@ export default class Light {
         this.light;
         this.helper;
 
-        this.createLight(this.color, this.intensity);        
+        this.createLight(this.color, this.intensity);
     }
 
     createLight(color, intensity) {
 
         if(this.type === "directional") {
-            this.light = new THREE.DirectionalLight(color, intensity);       
+            this.light = new THREE.DirectionalLight(color, intensity);
         } else if (this.type === "hemisphere") {
-            this.light = new THREE.HemisphereLight(this.skyColor, this.groundColor, intensity);   
+            this.light = new THREE.HemisphereLight(this.skyColor, this.groundColor, intensity);
         } else if (this.type === "point") {
-            this.light = new THREE.PointLight(color, intensity, this.distance, this.decay);  
+            this.light = new THREE.PointLight(color, intensity, this.distance, this.decay);
         } else if (this.type === "area") {
-            this.light = new THREE.RectAreaLight(color, intensity, this.width, this.height);            
+            this.light = new THREE.RectAreaLight(color, intensity, this.width, this.height);
         } else if (this.type === "spot") {
             this.light = new THREE.SpotLight(color, intensity, this.distance, this.angle, this.penumbra, this.decay);
-            // this.light.penumbra = this.penumbra;            
+            // this.light.penumbra = this.penumbra;
         } else if (this.type === "ambient") {
-            this.light = new THREE.AmbientLight(color, intensity);   
+            this.light = new THREE.AmbientLight(color, intensity);
         }
 
-        this.light.lookAt(this.lookAt[0], this.lookAt[1], this.lookAt[2]);        
+        this.light.lookAt(this.lookAt[0], this.lookAt[1], this.lookAt[2]);
         this.light.position.set(this.position[0], this.position[1], this.position[2])
 
         this.scene.add(this.light);
@@ -75,13 +75,13 @@ export default class Light {
         if(this.type === "directional") {
             this.helper = new THREE.DirectionalLightHelper(this.light, size, color);
         } else if (this.type === "hemisphere") {
-            this.helper = new THREE.HemisphereLightHelper(this.light, size, color);   
+            this.helper = new THREE.HemisphereLightHelper(this.light, size, color);
         } else if (this.type === "point") {
-            this.helper = new THREE.PointLightHelper(this.light, size, color);  
+            this.helper = new THREE.PointLightHelper(this.light, size, color);
         } else if (this.type === "area") {
-            this.helper = new THREE.RectAreaLightHelper(this.light, color);       
+            this.helper = new RectAreaLightHelper(this.light, color);
         } else if (this.type === "spot") {
-            this.helper = new THREE.SpotLightHelper(this.light);        
+            this.helper = new THREE.SpotLightHelper(this.light);
         }
 
         this.scene.add(this.helper);
@@ -94,9 +94,9 @@ export default class Light {
 
 
 /**********************************************************************************
-     * 
+     *
      *      LIGHTS
-     * 
+     *
      **********************************************************************************/
 
     // // LIGHT - Directional
