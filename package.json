@@ -16,7 +16,7 @@
         "url": "https://github.com/pendulumswing/DNA-Viewer/issues"
     },
     "scripts": {
-        "build": "npm run build:production && npm run server:node",
+        "build": "npm run build:production",
         "build:development": "webpack --config webpack.dev.js",
         "build:production": "npm run clean && webpack --config webpack.prod.js",
         "deploy": "vercel",
