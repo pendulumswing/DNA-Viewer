@@ -19,7 +19,7 @@
         "build": "npm run build:production && npm run server:node",
         "build:development": "webpack --config webpack.dev.js",
         "build:production": "npm run clean && webpack --config webpack.prod.js",
-        "deploy": "now",
+        "deploy": "vercel",
         "deploy:production": "npm run build:production && npm run deploy",
         "clean": "rimraf dist",
         "start": "webpack-dev-server --config webpack.dev.js  --open",
