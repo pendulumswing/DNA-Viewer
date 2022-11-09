@@ -6,9 +6,7 @@ A working version can be seen [here](https://dna-viewer-git-jb-pendulumswing.ver
 
 Project template was derived from one of the threejs examples found [here](https://threejs.org/examples/#webgl_animation_keyframes)
 
-![](img/dna-viewer-demo.gif)
-![](img/dna-viewer-springiness.gif)
-![](img/dna-viewer-slider-control.gif)
-
-
+<img src="img/dna-viewer-demo.gif" alt="dna-viewer demo" style="display:block; padding: 10px;" width="500"/>
+<img src="img/dna-viewer-springiness.gif" alt="dna-viewer springiness" style="display:block; padding: 10px;" width="500"/>
+<img src="img/dna-viewer-slider-control.gif" alt="dna-viewer slider control" style="display:block; padding: 10px;" width="500"/>
 
