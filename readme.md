@@ -1,4 +1,4 @@
-# README
+# DNA Viewer
 
 A 3D DNA Viewer to explore potential uses for [threejs](https://threejs.org/), created for the Douglas Lab at UCSF.
 Originally created in 2019. Updated dependencies and deployed to Vercel in 2022.
