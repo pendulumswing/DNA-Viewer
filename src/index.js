@@ -9,7 +9,7 @@ import './assets/css/style.css';
  * Do the WebGL check if desired
  */
 
-import WebGL from './app/utils/webGL';
+// import WebGL from './app/utils/webGL';
 
 // if (!WebGL.isWebGLAvailable()) {
 //     const node = document.getElementById("canvas");

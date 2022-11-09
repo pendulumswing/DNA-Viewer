@@ -6,27 +6,57 @@ import Constants from '../constants/Constants.js';
 
 // SPRING
 export default class Spring extends PrimitiveObject {
-    constructor(scene, top, bot) {
+    constructor(options={}) {
 
-        super(scene);
+        super(options);        
+
+        if(options.scene === null) {
+            console.log("DNA Spring object requires a scene object in Options parameter object.");
+        } 
+        if(options.top === null) {
+            console.log("DNA Spring object requires a Vector3 for 'top' in Options parameter object.");
+        } 
+        if(options.bottom === null) {
+            console.log("DNA Spring object requires a Vector3 for 'bottom' in Options parameter object.");
+        } 
+
+        // Default Values
+        this.defaults = {
+
+            // Spring Properties
+            framerate: 1/60,                // Framerate to calculate how much to move each update
+            stiffness: {k: -175},           // Spring stiffness, in kg / s^2
+            springLength: 1.1,              // Spring Equilibrium distance
+            damping: {b: -25.0},            // Damping constant, in kg / s
+            speed: 2.5,
+
+            // Parameters
+            springRadius: 0.07,
+            springHeight: Constants.BASE_DISTANCE_START,
+            springRadSegments: 8,
+            springHeightSegments: 1,
+            spring_Color: 0xEE8800,
+            spring_Pos: {x:0, y:0, z:0}
+        }
+
+        // Combine Defaults with Options Parameter
+        options = Object.assign({}, this.defaults, options);   
 
         // Spring Properties
-        this.framerate = 1/60;                                                             // Framerate to calculate how much to move each update
-        this.stiffness = {k: -175};                                                           // Spring stiffness, in kg / s^2
-        this.springLength = 1.1;                                   // Spring Equilibrium distance
-        this.damping = {b: -25.0};                                                            // Damping constant, in kg / s
-        this.speed = 2.5;
+        this.framerate = options.framerate;
+        this.stiffness = options.stiffness;
+        this.springLength = options.springLength;
+        this.damping = options.damping;
+        this.speed = options.speed;
 
         // Parameters
-        // this.baseDistanceAtStart = 1.1;
-        this.springRadius = 0.07;
-        // this.springHeight = BASE_DISTANCE_START;
-        this.springHeight = Constants.BASE_DISTANCE_START;
-        this.springRadSegments = 8;
-        this.springHeightSegments = 1;
-        this.spring_Geo = new THREE.CylinderGeometry(this.springRadius, this.springRadius, this.springHeight, this.springRadSegments, this.springHeightSegments);
-        this.spring_Color = 0xEE8800;
-        this.spring_Pos = {x:0, y:0, z:0};
+        this.springRadius = options.springRadius;
+        this.springHeight = options.springHeight;
+        this.springRadSegments = options.springRadSegments;
+        this.springHeightSegments = options.springHeightSegments;
+        this.spring_Geo = new THREE.CylinderGeometry(this.springRadius, this.springRadius, this.pringHeight, this.springRadSegments, this.springHeightSegments),
+        this.spring_Color = options.spring_Color;
+        this.spring_Pos = options.spring_Pos;
 
         // Meshes
         this.topAtom_Loc = new THREE.Object3D();
@@ -36,8 +66,8 @@ export default class Spring extends PrimitiveObject {
         this.spring_Obj.material.opacity = 0.5;
 
         this.addComponents();
-        this.addObjectsToScene(scene);
-        this.rig(top, bot);
+        this.addObjectsToScene(options.scene);
+        this.rig(options.top, options.bottom);
     }
 
     rig(top, bot) {
@@ -75,7 +105,6 @@ export default class Spring extends PrimitiveObject {
     }
 
     springSimulate(topObject, botObject, lastInChain=false) {
-        
 
         this.top = {y: 1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                    // Object to hold Top Base Spring Data
         this.bot = {y: -1, ly: -1, v: 0, mass: 1, frequency: 0, t: 0};                   // Object to hold Bottom Base Spring Data

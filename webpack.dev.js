@@ -1,11 +1,11 @@
 /********************************************************************
  *  WEBPACK DEVELOPMENT - Config that builds off of webpack.common.js
- *  to build within a development environment. 
+ *  to build within a development environment.
  ********************************************************************/
 
 const path = require("path");
 const common = require("./webpack.common");
-const merge = require("webpack-merge");
+const { merge } = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
@@ -19,7 +19,7 @@ module.exports = merge(common, {
     new HtmlWebpackPlugin({                             // PLUGIN - HtmlWebpackPlugin
       template: "./src/index.html"                      // <-- Template HTML
     })
-  ],  
+  ],
 
   module: {
     rules: [
@@ -62,7 +62,7 @@ module.exports = merge(common, {
       }
     ]
   },
-  // devServer: {                 // Overriding port number will not load favicon. 
+  // devServer: {                 // Overriding port number will not load favicon.
   //   // https: false,
   //   // host: 'localhost',
   //   port: 3000,

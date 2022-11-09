@@ -5,15 +5,16 @@
 
 const path = require("path");
 const common = require("./webpack.common");
-const merge = require("webpack-merge");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { merge } = require("webpack-merge");
+const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");    // This plugin extracts CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+// const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");              // JS Minimizer - require when necessary to explicitly minify JS outside default 'minimizer' behavior
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');           // Copies individual files or entire directories to the build directory.
-const WebappWebpackPlugin = require('webapp-webpack-plugin');       // automatically generate webapp manifest files along with 44 different icon formats as appropriate for iOS devices, Android devices, Windows Phone and various desktop browsers out of your single logo.png
-const ManifestPlugin = require('webpack-manifest-plugin');          // For generating asset manifests 
+// const WebappWebpackPlugin = require('webapp-webpack-plugin');       // automatically generate webapp manifest files along with 44 different icon formats as appropriate for iOS devices, Android devices, Windows Phone and various desktop browsers out of your single logo.png
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');          // For generating asset manifests
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');   // Progress bar during build
 const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');  // Extension for html-webpack-plugin to programmatically insert or update <base href="" /> tag.
 
@@ -25,10 +26,11 @@ module.exports = merge(common, {                            // Will merge this c
     path: path.resolve(__dirname, "dist")
   },
   optimization: {
-    minimizer: [                                            // 
-      new OptimizeCssAssetsPlugin(),                        // CSS Optimize
-      new TerserPlugin(),                                   // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin         
-      new HtmlWebpackPlugin({                               // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin 
+    minimizer: [                                            //
+      // new OptimizeCssAssetsPlugin(),                        // CSS Optimize
+      new CssMinimizerPlugin(),
+      new TerserPlugin(),                                   // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin
+      new HtmlWebpackPlugin({                               // Must re-specify since default settings are overidden with OptimizeCssAssetsPlugin
         template: "./src/index.html",                       // <-- Template HTML
         // inject: 'body',
         minify: {
@@ -37,8 +39,8 @@ module.exports = merge(common, {                            // Will merge this c
           removeComments: true
         }
       }),
-      new BaseHrefWebpackPlugin({ 
-        baseHref: '/' 
+      new BaseHrefWebpackPlugin({
+        baseHref: '/'
       })
     ],
     splitChunks: {
@@ -47,41 +49,42 @@ module.exports = merge(common, {                            // Will merge this c
   },
 
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'asset-manifest.json'
     }),
     new ProgressBarPlugin(),
-    new MiniCssExtractPlugin({ 
+    new MiniCssExtractPlugin({
       filename: "styles.[name].[contentHash].css",          // CSS OUTPUT FILENAME
       chunkFilename: 'styles.[id].css',
     }),
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([{                                // Copies individual files or entire directories to the build directory.
-      from: './src/assets/images',
-      to: './assets/images'
-    }]),
-    new WebappWebpackPlugin({                               // Favicon
-      logo: './src/assets/images/favicon.png',
-      cache: true,
-      prefix: 'favicons-[hash]/',
-      // emitStats: true,
-      // statsFilename: 'favicon-manifest.json',
-      inject: true,
-      favicons: {
-        icons: {
-          android: false,
-          appleIcon: false,
-          appleStartup: false,
-          coast: false,
-          favicons: true,
-          firefox: false,
-          windows: false,
-          yandex: false
-        }
-      }
-    })
+    new CopyWebpackPlugin({                                // Copies individual files or entire directories to the build directory.
+      patterns: [
+          {from: './src/assets/images', to: './assets/images'  }
+      ]
+    }),
+    // new WebappWebpackPlugin({                               // Favicon
+    //   logo: './src/assets/images/favicon.png',
+    //   cache: true,
+    //   prefix: 'favicons-[hash]/',
+    //   // emitStats: true,
+    //   // statsFilename: 'favicon-manifest.json',
+    //   inject: true,
+    //   favicons: {
+    //     icons: {
+    //       android: false,
+    //       appleIcon: false,
+    //       appleStartup: false,
+    //       coast: false,
+    //       favicons: true,
+    //       firefox: false,
+    //       windows: false,
+    //       yandex: false
+    //     }
+    //   }
+    // })
   ],
-  
+
   module: {
     rules: [
       {
@@ -133,7 +136,7 @@ module.exports = merge(common, {                            // Will merge this c
             )
           }
         }
-      }      
+      }
     ]
   }
 });
