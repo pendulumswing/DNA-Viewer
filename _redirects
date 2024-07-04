@@ -1,0 +1,7 @@
+/assets/(.*) /dist/assets/$1 200
+/favicon(.*) /dist/favicon$1 200
+/asset-manifest.json /dist/asset-manifest.json 200
+/bundle(.*) /dist/bundle$1 200
+/style(.*) /dist/style$1 200
+/(.*) /dist/index.html 200
+
