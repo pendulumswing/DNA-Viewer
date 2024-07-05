@@ -3,77 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<title>DNA Viewer</title>
-
-	<!--
-		  Favicons!
-
-		  Webpack will automatically convert the high-resolution image saved to "assets/images/favicon.png"
-		  into a series of favicons for various devices like the browser, android, apple, windows, etc.
-
-		  By default, only the favicons for the browser are generated, but you can change that by modifying
-		  the settings for the FaviconsWebpackPlugin in the webpack config. The generated favicons all contain
-		  a unique hash in the URL to facilitate cache busting, and will look like this:
-
-		  <link rel="icon" type="image/png" sizes="32x32" href="/favicons-[hash]/favicon-32x32.png">
-		  <link rel="icon" type="image/png" sizes="16x16" href="/favicons-[hash]/favicon-16x16.png">
-		  <link rel="shortcut icon" href="/favicons-[hash]/favicon.ico">
-
-		  If you'd like to take full control over favicon generation process, or learn more about why
-		  favicon generation can be challenging, the Real Favicon Generator website is a great resource:
-
-		  http://realfavicongenerator.net/faq
-		-->
-
-		<!--
-          Styles!
-
-          Webpack will place your styles below this comment.
-
-          In development, they will be included inline, like this:
-
-          <style>
-            ... your styles ...
-          </style>
-
-          In production, the ExtractTextPlugin in the webpack config will extract
-          all styles and place them in a file called styles.main.css, which will be
-          included like this:
-
-          <link href="/styles.main.css" rel="stylesheet">
-
-          To facilitate cache busting, this file will also contain a unique hash, to
-          prevent browsers from using old styles once they've been updated. The final
-          production file will look something like this:
-
-          <link href="/styles.main.bb904647341499c464e6.css" rel="stylesheet">
-		-->
 		
 </head>
 <body>
 	<div id="animGroup">
 		<div class=animRow>
-			<!-- <div class="animText">
-				<p>This is some text about the awesome animation to the right.</p>
-			</div> -->
 			<div class="animDiv">
 				<div class="gui" id="gui1"></div>
-				<!-- <button class="button" id="reset">Reset</button> -->
-				<!-- <button class="button" id="pause">Pause</button> -->
 				<canvas class="c" id="c1"></canvas>
-			</div>
-		</div>
-		<div class=animRow>
-			<!-- <div class="animText">
-				<p>This is some text about the awesome animation to the right.</p>
-			</div> -->
-			<div class="animDiv">
-				
-				<!-- <button class="button" id="reset">Reset</button> -->
-				<!-- <button class="button" id="pause">Pause</button> -->
-				<canvas class="c" id="c2"></canvas>
-			</div>
-			<div class="guiDiv">
-				<div class="gui" id="gui2"></div>
 			</div>
 		</div>
 	</div>

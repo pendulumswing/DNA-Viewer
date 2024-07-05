@@ -1,6 +1,0 @@
-/assets/(.*)            /dist/assets/:splat
-/favicon(.*)            /dist/favicon:splat
-/asset-manifest.json    /dist/asset-manifest.json
-/bundle(.*)             /dist/bundle:splat
-/style(.*)              /dist/style:splat
-/(.*)                   /dist/index.html

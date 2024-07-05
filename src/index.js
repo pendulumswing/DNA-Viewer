@@ -3,7 +3,7 @@
  * They will be dynamically injected into the index.html file
  */
 
-import './assets/css/style.css';
+import './style.css';
 
 /*
  * Do the WebGL check if desired

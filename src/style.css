@@ -33,6 +33,7 @@ body, html {
 #animGroup {
     position: relative;
     max-width: 1200px;
+    width: 100%;
 }
 
 .animRow {

@@ -62,8 +62,20 @@ export function dnaObjectScene(canvasID, guiID, aspect, basesCount=5, options={}
 **********************************************************************************/
 
     const lightDirectional = new Light(scene, {type: "directional", color: 0xFFFFFF, intensity: 0.8, position: [-1, 2, 4]});
+    // const lightDirectional = new THREE.DirectionalLight(0xFFFFFF, 0.8);
+    // lightDirectional.position.set(-1, 2, 4);
+    // scene.add(lightDirectional);
+
     const lightAmbient = new Light(scene, {type: "ambient", color: 0xFFFFFF, intensity: 0.6, position: [-1, 2, 4]});
+    // const lightAmbient = new THREE.AmbientLight(0xFFFFFF, 0.6);
+    // lightAmbient.position.set(-1, 2, 4);
+    // scene.add(lightAmbient);
+
     const lightSpot = new Light(scene, {type: "spot", color: 0xAAFFFF, intensity: 0.4, position: [-1, -1, -5], penumbra: 0.5});
+    // const lightSpot = new THREE.SpotLight(0xAAFFFF, 0.4);
+    // lightSpot.position.set(-1, -1, -5);
+    // lightSpot.penumbra = 0.5;
+    // scene.add(lightSpot);
 
 /**********************************************************************************
 *
